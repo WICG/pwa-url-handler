@@ -1,7 +1,7 @@
 
 # Progressive Web Apps as URL Handlers
 
-Author: Lu Huang &lt;<luhu@microsoft.com>&gt;<br>
+Author: Lu Huang &lt;<luhua@microsoft.com>&gt;<br>
 
 Date: 2020-05-28
 
