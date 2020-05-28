@@ -1,10 +1,10 @@
 
-# Specification 'pwa-url-handler'
+# Progressive Web Apps as URL Handlers
 
 Author: Lu Huang &lt;<luhu@microsoft.com>&gt;<br>
 
-Date: 2017-09-22
+Date: 2020-05-28
 
-This site details a proposal for a new capability that would web applications to register as URL handlers. You're welcome to contribute! 
+This site details a proposal for a new capability that would allow web applications to register as URL handlers. You're welcome to contribute! 
 
 [Explainer](explainer.md)
