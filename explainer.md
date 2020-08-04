@@ -67,9 +67,9 @@ To allow PWAs to handle URLs that are outside of their own scope, it is necessar
 
 ### Manifest Changes
 
-We propose adding a new _optional_ member `handle_urls` to the manifest object. This member is an array of strings. Each string represents an origin. Origin strings are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that are from these origins could be handled by this web app.
+We propose adding a new _optional_ member `app_links` to the manifest object. This member is an array of strings. Each string represents an origin. Origin strings are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that are from these origins could be handled by this web app.
 
-`handle_urls` origin strings act as requests from the PWA to handle URLs. The browser should validate with each origin that the PWA has the authority to handle those URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app lifecycle.
+`app_links` origin strings act as requests from the PWA to handle URLs. The browser should validate with each origin that the PWA has the authority to handle those URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app lifecycle.
 
 Example web app manifest at `https://contoso.com/manifest.json` :
 
@@ -84,14 +84,12 @@ Example web app manifest at `https://contoso.com/manifest.json` :
             "sizes": "144x144"
         }
     ],
-    "capture_links": {
-        "behavior": "existing_client_event",
-        "exclude_paths": [
-            "/about",
-            "/blog"
-        ]
-    },
-    "handle_urls": [
+    "capture_links": "existing_client_event",
+    "capture_links_exclude_paths": [
+        "/about",
+        "/blog"
+    ],
+    "app_links": [
         "contoso.com",
         "conto.so",
         "*.contoso.com"
@@ -112,14 +110,12 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
             "sizes": "144x144"
         }
     ],
-    "capture_links": {
-        "behavior": "existing_client_event",
-        "exclude_paths": [
-            "/about",
-            "/blog"
-        ]
-    },
-    "handle_urls": [
+    "capture_links": "existing_client_event",
+    "capture_links_exclude_paths": [
+        "/about",
+        "/blog"
+    ],
+    "app_links": [
         "contoso.com",
         "conto.so",
         "*.contoso.com"
@@ -127,13 +123,13 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
 }
 ```
 
-A PWA matches a URL (from link activation, navigation, or otherwise) for URL handling if the URL matches one of the origin strings in `handle_urls` and the browser is able to validate that the origin agrees to let this app handle such a URL. If it finds a wildcard prefix in an origin, the browser would have to validate with the domain.
+A PWA matches a URL (from link activation, navigation, or otherwise) for URL handling if the URL matches one of the origin strings in `app_links` and the browser is able to validate that the origin agrees to let this app handle such a URL. If it finds a wildcard prefix in an origin, the browser would have to validate with the domain.
 
-`handle_urls` can contain the same origin as that of the requesting PWA's scope, but also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `handle_urls` requests can be validated with origins.
+`app_links` can contain the same origin as that of the requesting PWA's scope, but also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `app_links` requests can be validated with origins.
 
 #### Wildcard Matching
 
-A wildcard prefix can be used in `handle_urls` origin strings to match for different subdomains. The wildcard `*` matches one or more characters. The scheme is still assumed to be https when using a wildcard prefix.
+A wildcard prefix can be used in `app_links` origin strings to match for different subdomains. The wildcard `*` matches one or more characters. The scheme is still assumed to be https when using a wildcard prefix.
 
  For eg. `*.contoso.com` matches `jadams.contoso.com` and `www.jqadams.contoso.com` but not `contoso.com` . There may be other ways of specifying a group of related origins such as [First Party Sets](https://github.com/krgovind/first-party-sets). Note that this feature would not be necessary if there was a suitable way to specify a multi-origin app scope similarly.
  
@@ -154,7 +150,7 @@ Example 1: web-app-origin-association file at both `www.contoso.com/web-app-orig
 [
     {
         "manifest": "https://contoso.com/manifest.json",
-        "handle_urls": {
+        "app_links": {
             "paths": [
                 "/*"
             ],
@@ -166,7 +162,7 @@ Example 1: web-app-origin-association file at both `www.contoso.com/web-app-orig
     },
     {
         "manifest": "https://partnerapp.com/manifest.json",
-        "handle_urls": {
+        "app_links": {
             "paths": [
                 "/public/data/*"
             ]
@@ -181,7 +177,7 @@ Example 2: web-app-origin-association file at `https://tenant.contoso.com/web-ap
 [
     {
         "manifest": "https://contoso.com/manifest.json",
-        "handle_urls": {
+        "app_links": {
             "paths": [
                 "/*"
             ],
@@ -192,7 +188,7 @@ Example 2: web-app-origin-association file at `https://tenant.contoso.com/web-ap
     },
     {
         "manifest": "https://partnerapp.com/manifest.json",
-        "handle_urls": {
+        "app_links": {
             "paths": [
                 "/*"
             ]
@@ -210,9 +206,9 @@ The top level structure is an array of objects. Each object represents an entry 
 | Field         | Required / Optional | Description                                              | Type   | Default |
 |:--------------|:--------------------|:---------------------------------------------------------|:-------|:--------|
 | `manifest`    | Required            | URL string of the web app manifest of the associated PWA | string | N/A     |
-| `handle_urls` | Required            | URL of the web app manifest of the associated PWA        | object | N/A     |
+| `app_links`   | Required            | URL of the web app manifest of the associated PWA        | object | N/A     |
 
-Each `handle_urls` contains:
+Each `app_links` contains:
 | Field           | Required / Optional | Description                      | Type | Default |
 |:----------------|:--------------------|:---------------------------------|:-----|:--------|
 | `paths`         | Optional            | Array of allowed path strings    |      | `[]`    |
@@ -270,7 +266,7 @@ In the case where the browser registers URL handling with the OS on behalf of PW
 
 If an associated site is overtaken by a malicious actor, it is possible for users to be exposed to malicious content through the PWA handling those URLs. To mitigate this risk, the browser may want to suppress the PWA launch or get user confirmation using a security mechanism which detects risky URLs.
 
-Conforming browsers may want to limit the maximum allowed number of `handle_urls` entries to N and the numbers of allowed and disallowed paths (in `web-app-origin-association` or equivalent) each to M. This will limit the amount of work the manifest parser does and further limit the risk of URL hijacking.
+Conforming browsers may want to limit the maximum processed entries of `app_links` to N and the numbers of allowed and disallowed paths (in `web-app-origin-association` or equivalent) each to M. This will limit the amount of work the manifest parser does and further limit the risk of URL hijacking.
 
 URL handler registrations should only be performed for installed PWAs as users expect installed applications to be more deeply integrated with the OS. Furthermore, conforming browsers should not activate PWAs as URL handlers for any URL without an explicit user confirmation.
 
@@ -298,4 +294,4 @@ iOS allows the association of apps to websites using [Universal Links](https://d
 
 ## Open Questions
 
-* Is `*.contoso.com` a valuable feature for `handle_urls` in the manifest change? It is an edge case that complicates validation.
+* Is sub-domain prefix (`*.contoso.com`) a valuable feature for `app_links` in the manifest change? 
