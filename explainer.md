@@ -45,7 +45,7 @@ The user clicks on a Spotify link in their native e-mail application, (eg., [htt
 
 We propose the following:
 
-1. Modify the web app manifest format to include a `url_handlers` dictionary entry.
+1. Modify the web app manifest format to include a `handle_urls` member.
     - Gives PWAs control over which URLs to handle.
     - Allows PWA developers to opt-in to URL handling in the same way across different platforms.
 
