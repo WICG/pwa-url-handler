@@ -45,7 +45,7 @@ The user clicks on a Spotify link in their native e-mail application, (eg., [htt
 
 We propose the following:
 
-1. Modify the web app manifest format to include a `handle_urls` member.
+1. Modify the web app manifest format to include an `app_links` member.
     - Gives PWAs control over which URLs to handle.
     - Allows PWA developers to opt-in to URL handling in the same way across different platforms.
 
@@ -53,9 +53,9 @@ We propose the following:
     - Protects content owners by letting them define which PWAs are allowed to associate with their sites.
     - Gives sites control over which URLs are allowed to be handled by each associated PWA.
 
-3. If launched to handle a URL activation, browsers then launch a PWA with matching `url_handlers` to handle that URL.
+3. If a browser is launched to handle a URL activation, it should try to launch a matching PWA to handle that URL.
 
-4. If multiple PWAs are registered to handle a given URL, browsers display a disambiguation dialog to allow users to choose.
+4. If multiple PWAs match a given URL, browsers should display a disambiguation dialog to allow users to choose one for launch.
 
 5. On OSes with adequate support, register PWAs as URL handlers at the OS level instead.
 
