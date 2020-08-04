@@ -1,6 +1,6 @@
 # PWAs as URL Handlers
 
-Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt; luhua@microsoft.com&gt;
+Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt; luhua@microsoft.com&gt; 
 
 Input from: [Mike Jackson](mailto:mjackson@microsoft.com), [Mandy Chen](mailto:mandy.chen@microsoft.com), [Howard Wolosky](mailto:howard.wolosky@microsoft.com)
 
@@ -46,12 +46,12 @@ The user clicks on a Spotify link in their native e-mail application, (eg., [htt
 We propose the following:
 
 1. Modify the web app manifest format to include an `app_links` member.
-    - Gives PWAs control over which URLs to handle.
-    - Allows PWA developers to opt-in to URL handling in the same way across different platforms.
+    * Gives PWAs control over which URLs to handle.
+    * Allows PWA developers to opt-in to URL handling in the same way across different platforms.
 
 2. A `web-app-origin-association` file format for validating out-of-scope URL associations.
-    - Protects content owners by letting them define which PWAs are allowed to associate with their sites.
-    - Gives sites control over which URLs are allowed to be handled by each associated PWA.
+    * Protects content owners by letting them define which PWAs are allowed to associate with their sites.
+    * Gives sites control over which URLs are allowed to be handled by each associated PWA.
 
 3. If a browser is launched to handle a URL activation, it should try to launch a matching PWA to handle that URL.
 
@@ -61,7 +61,7 @@ We propose the following:
 
 **Changes 1-4** allow PWAs to handle URL activations at the browser level, which means that as long as a URL activation (clicking on a link) launches a conforming browser, the browser has the ability to launch the matching PWA. A PWA will not be launched if it was installed through a non-default browser and all URL activations launch the default browser.
 
-To allow PWAs to handle URLs that are outside of their own scope, it is necessary to introduce a mechanism for the owner of those URLs to opt-in to URL handling by PWAs. **Change 2** introduces the concept of a `web-app-origin-association` file that will serve this purpose. This file is similar to the [Apple App Site Association File](https://developer.apple.com/documentation/safariservices/supporting_associated_domains_in_your_app#3001215), the [ `assetlinks.json` ](https://developer.android.com/training/app-links/verify-site-associations) file in Android, and the [ `windows-app-web-link` ](https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking#associate-your-app-and-website-with-a-json-file) file in Windows. What differs, is that the `web-app-origin-association` file does not require a platform specific app id, but instead identifies PWAs by their web app manifest URL.
+To allow PWAs to handle URLs that are outside of their own scope, it is necessary to introduce a mechanism for the owner of those URLs to opt-in to URL handling by PWAs. **Change 2** introduces the concept of a `web-app-origin-association` file that will serve this purpose. This file is similar to the [Apple App Site Association File](https://developer.apple.com/documentation/safariservices/supporting_associated_domains_in_your_app#3001215), the [`assetlinks.json`](https://developer.android.com/training/app-links/verify-site-associations) file in Android, and the [`windows-app-web-link`](https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking#associate-your-app-and-website-with-a-json-file) file in Windows. What differs, is that the `web-app-origin-association` file does not require a platform specific app id, but instead identifies PWAs by their web app manifest URL.
 
 **Change 5** will also allow PWAs to handle URL activations at the OS level on supportive platforms. If the PWA is able to register as a URL handler with the OS, it could be launched whenever a URL activation is handled by the OS, regardless of the default browser setting. Most native applications rely on the OS for URL activation. In terms of user experience, the OS could now prompt the user to choose between the PWA and the default browser using the system app disambiguation dialog. The user is able to make an explicit choice to select the PWA and configure their default setting from there. (Implementation note: because most OSes do not know of or treat PWAs as first-class applications, it may not be possible to register them directly with the OS as URL handlers. Supporting changes will need to be made in PWA implementation and/or in the OS to enable this. A notable exception is Chrome's implementation of PWAs on Android using `WebAPK` . Because `WebAPK` s are recognized by the Android OS, Chrome PWAs are able to fully integrate with OS features like the app picker.)
 
@@ -133,7 +133,6 @@ A wildcard prefix can be used in `app_links` origin strings to match for differe
 
  For eg. `*.contoso.com` matches `jadams.contoso.com` and `www.jqadams.contoso.com` but not `contoso.com` . There may be other ways of specifying a group of related origins such as [First Party Sets](https://github.com/krgovind/first-party-sets). Note that this feature would not be necessary if there was a suitable way to specify a multi-origin app scope similarly.
  
-
 ### web app to origin association
 
 Browsers must validate a handshake between a PWA and an origin to successfully register URL handlers. Origins can declare associations with specific web apps to complete this handshake. Web apps can be identified by their manifest URL currently before a [unique identifier](https://github.com/w3c/manifest/issues/586) is standardized. An origin should be allowed to specify URL patterns to fine-tune URL paths for URL handling.
@@ -150,7 +149,7 @@ Example 1: web-app-origin-association file at both `www.contoso.com/web-app-orig
 [
     {
         "manifest": "https://contoso.com/manifest.json",
-        "app_links": {
+        "handle_urls": {
             "paths": [
                 "/*"
             ],
@@ -162,7 +161,7 @@ Example 1: web-app-origin-association file at both `www.contoso.com/web-app-orig
     },
     {
         "manifest": "https://partnerapp.com/manifest.json",
-        "app_links": {
+        "handle_urls": {
             "paths": [
                 "/public/data/*"
             ]
@@ -177,7 +176,7 @@ Example 2: web-app-origin-association file at `https://tenant.contoso.com/web-ap
 [
     {
         "manifest": "https://contoso.com/manifest.json",
-        "app_links": {
+        "handle_urls": {
             "paths": [
                 "/*"
             ],
@@ -188,7 +187,7 @@ Example 2: web-app-origin-association file at `https://tenant.contoso.com/web-ap
     },
     {
         "manifest": "https://partnerapp.com/manifest.json",
-        "app_links": {
+        "handle_urls": {
             "paths": [
                 "/*"
             ]
@@ -203,10 +202,10 @@ Example 2 shows that the origin `https://tenant.contoso.com` allows the PWAs wit
 
 The top level structure is an array of objects. Each object represents an entry for a unique web app. Each object contains:
 
-| Field         | Required / Optional | Description                                              | Type   | Default |
-|:--------------|:--------------------|:---------------------------------------------------------|:-------|:--------|
-| `manifest`    | Required            | URL string of the web app manifest of the associated PWA | string | N/A     |
-| `app_links`   | Required            | URL of the web app manifest of the associated PWA        | object | N/A     |
+| Field       | Required / Optional | Description                                              | Type   | Default |
+|:------------|:--------------------|:---------------------------------------------------------|:-------|:--------|
+| `manifest`  | Required            | URL string of the web app manifest of the associated PWA | string | N/A     |
+| `app_links` | Required            | URL of the web app manifest of the associated PWA        | object | N/A     |
 
 Each `app_links` contains:
 | Field           | Required / Optional | Description                      | Type | Default |
@@ -294,4 +293,4 @@ iOS allows the association of apps to websites using [Universal Links](https://d
 
 ## Open Questions
 
-* Is sub-domain prefix (`*.contoso.com`) a valuable feature for `app_links` in the manifest change? 
+* Is sub-domain prefix ( `*.contoso.com` ) a valuable feature for `app_links` in the manifest change? 
