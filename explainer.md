@@ -271,7 +271,9 @@ URL handler registrations should only be performed for installed PWAs as users e
 
 ## Privacy Considerations
 
-As websites are currently unable to launch URL handlers through normal in-browser navigation, we do not anticipate third-party websites being able to leverage this API to detect which PWAs the user has installed. Although not an immediate privacy concern, fingerprinting risks should be thoroughly examined when designing web APIs that activate URL handlers instead of performing in-browser navigation.
+Third-party websites would not be able to leverage this API to detect installed web apps by observing navigations to first-party URL links if there is no difference in in-browser navigation behavior.
+
+Although not an immediate privacy concern, fingerprinting risks should be thoroughly examined when designing web APIs that activate URL handlers instead of performing regular in-browser navigation. Further mitigation such as obfuscation of launch timing may be necessary.
 
 Native applications can already use OS APIs to enumerate installed applications on the user's system. For example, native applications in Windows can use the [FindAppUriHandlersAsync](https://docs.microsoft.com/en-us/uwp/api/windows.system.launcher.findappurihandlersasync) API to enumerate URL handlers. If PWAs register as OS level URL handlers in Windows, their presence would be visible to other applications.
 
