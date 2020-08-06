@@ -259,9 +259,9 @@ To provide OS level registration of URL handlers, browsers' PWA implementations 
 
 ## Security Considerations
 
-URL handlers, if implemented improperly, can be used to hijack traffic for websites. This is why the pwa to site association mechanism is an important part of the proposed scheme. Associations must be validated when PWAs are installed, and they should be validated again periodically to evaluate any new changes in the association file and web app manifest.
+URL handlers, if improperly implemented, can be used to hijack traffic for websites. This is why the app association mechanism is an important part of the proposed scheme. Associations must be validated when PWAs are installed, and again periodically to evaluate any new changes in the association file and web app manifest.
 
-In the case where the browser registers URL handling with the OS on behalf of PWAs, the OS must trust the browser to validate the PWA-to-site association or implement the validation itself. If the OS delegates the validation to browsers, it must be clear which browsers are compliant with the validation requirements.
+If a browser registers apps with the OS as URL handlers, the OS must trust that browser to validate the PWA-to-site association or implement suitable validation itself. If the OS delegates the validation to browsers, it must be clear which browsers are compliant with the validation requirements.
 
 If an associated site is overtaken by a malicious actor, it is possible for users to be exposed to malicious content through the PWA handling those URLs. To mitigate this risk, the browser may want to suppress the PWA launch or get user confirmation using a security mechanism which detects risky URLs.
 
