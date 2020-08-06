@@ -289,7 +289,11 @@ Other browsers (e.g., Edge) on Android are able to add PWAs to the home screen b
 
 ### iOS, MacOS
 
-iOS allows the association of apps to websites using [Universal Links](https://developer.apple.com/ios/universal-links/). Some PWA features are also implemented on Safari. There is not currently a way to generate and install a PWA from any other browser. PWA URL handling may not currently be possible on iOS. Newer versions of MacOS also support Universal Links.
+* iOS allows the association of apps to websites using [Universal Links](https://developer.apple.com/ios/universal-links/). 
+* Newer versions of MacOS also support Universal Links. 
+* Safari implements a subset of PWA features.
+* Safari is currently the only browser able to install a PWA as an iOS app. 
+* Universal links/link capturing is not available to iOS PWAs. 
 
 ## Open Questions
 
