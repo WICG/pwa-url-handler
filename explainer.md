@@ -69,7 +69,7 @@ To allow PWAs to handle URLs that are outside of their own scope, it is necessar
 
 We propose adding a new _optional_ member `app_links` to the manifest object. This member is an array of strings. Each string represents an origin. Origin strings are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that are from these origins could be handled by this web app.
 
-`app_links` origin strings act as requests from the PWA to handle URLs. The browser should validate with each origin that the PWA has the authority to handle those URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app lifecycle.
+`app_links` origin strings are requests from the PWA to handle URLs from those origins. The browser should validate with each origin that the PWA has the authority to handle those URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app lifecycle.
 
 Example web app manifest at `https://contoso.com/manifest.json` :
 
@@ -122,10 +122,11 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
     ]
 }
 ```
+(`capture_link` and `capture_links_exclude_paths` from the [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) proposal added to examples for comparison.)
 
-A PWA matches a URL (from link activation, navigation, or otherwise) for URL handling if the URL matches one of the origin strings in `app_links` and the browser is able to validate that the origin agrees to let this app handle such a URL. If it finds a wildcard prefix in an origin, the browser would have to validate with the domain.
+A PWA matches a URL for URL handling if the URL matches one of the origin strings in `app_links` and the browser is able to validate that the origin agrees to let this app handle such a URL. 
 
-`app_links` can contain the same origin as that of the requesting PWA's scope, but also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `app_links` requests can be validated with origins.
+`app_links` can contain an origin that encompasses requesting PWA's scope and also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `app_links` requests can be validated with origins. Navigation redirection is not a good alternative with respect to offline scenarios.
 
 #### Wildcard Matching
 
@@ -207,7 +208,7 @@ The top level structure is an array of objects. Each object represents an entry 
 | Field         | Required / Optional | Description                                              | Type   | Default |
 | :------------ | :------------------ | :------------------------------------------------------- | :----- | :------ |
 | `manifest`    | Required            | URL string of the web app manifest of the associated PWA | string | N/A     |
-| `handle_urls` | Required            | Contains arrays of URL patterns                          | object | N/A     |
+| `handle_urls` | Optional            | Contains arrays of URL patterns                          | object | N/A     |
 
 Each `handle_urls` contains:
 | Field           | Required / Optional | Description                      | Type     | Default |
