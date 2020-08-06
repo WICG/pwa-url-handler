@@ -233,17 +233,23 @@ Web applications often provide users with shortened URLs for convenience. If dev
 
 ### Browser Changes
 
-To support basic, browser-level registration of URL handlers, browsers need to make the following changes:
+To support basic, browser-level registration of URL handlers, browsers should make the following changes:
 
-1. Validate and register the URL handling requests from PWA manifests during PWA installation.
+1. Validate and register the `app_links` data from PWA manifests during PWA installation and periodically revalidate installed apps.
 
-2. When starting with a URL parameter, determine if there are any matching PWA URL handlers.
+2. Perform adequate validation to address security and privacy concerns, but may do so using the web-app-origin-association file or other methods of their choosing. 
 
-3. If there is a match, launch the PWA and load the URL in the PWA window instead of the browser window.
+3. When starting with a URL parameter, determine if there are any matching PWA URL handlers.
 
-4. If there is more than one match, display the choices and collect the user's input with a disambiguation dialog.
+   * If there is a match, launch the PWA and load the URL in a new standalone window instead of the browser window.
 
-5. Keep URL handling registrations in sync with the PWA's lifecycle (i.e. during manifest update, uninstall, etc.)
+   * If the launch URL is not within the app scope, browsers can delegate to a document event handler. If there is an existing app window with a loaded document, browsers can try to find a suitable event handler there. If not found, the browser could fall back to opening a new app window, waiting for a document to load, and looking for a suitable event handler.  
+
+   * If there is a manifest member that specifies a behavior for launching web apps from link activations (for eg. `capture_links` in [Declarative Link Capture](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md)), app launch should try to follow that behavior instead.
+
+   * If there is more than one match, display the choices and collect the user's input with a disambiguation dialog.
+
+4. Keep URL handling registrations in sync with the PWA's lifecycle (i.e. during manifest update, uninstall, etc.)
 
 #### User preferences
 
