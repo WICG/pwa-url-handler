@@ -202,22 +202,22 @@ Example 2 shows that the origin `https://tenant.contoso.com` allows the PWAs wit
 
 The top level structure is an array of objects. Each object represents an entry for a unique web app. Each object contains:
 
-| Field       | Required / Optional | Description                                              | Type   | Default |
-|:------------|:--------------------|:---------------------------------------------------------|:-------|:--------|
-| `manifest`  | Required            | URL string of the web app manifest of the associated PWA | string | N/A     |
-| `app_links` | Required            | URL of the web app manifest of the associated PWA        | object | N/A     |
+| Field         | Required / Optional | Description                                              | Type   | Default |
+| :------------ | :------------------ | :------------------------------------------------------- | :----- | :------ |
+| `manifest`    | Required            | URL string of the web app manifest of the associated PWA | string | N/A     |
+| `handle_urls` | Required            | Contains arrays of URL patterns                          | object | N/A     |
 
-Each `app_links` contains:
-| Field           | Required / Optional | Description                      | Type | Default |
-|:----------------|:--------------------|:---------------------------------|:-----|:--------|
-| `paths`         | Optional            | Array of allowed path strings    |      | `[]`    |
-| `exclude_paths` | Optional            | Array of disallowed path strings |      | `[]`    |
+Each `handle_urls` contains:
+| Field           | Required / Optional | Description                      | Type     | Default |
+| :-------------- | :------------------ | :------------------------------- | :------- | :------ |
+| `paths`         | Optional            | Array of allowed path strings    | string[] | `[]`    |
+| `exclude_paths` | Optional            | Array of disallowed path strings | string[] | `[]`    |
 
 #### File Location
 
-To make use of the web-app-origin-association format, we suggest browsers locate it using a `<link rel="web-app-origin-association" href="/web-app-origin-association">` element in the header section of the main document at the origin's root path. Other native formats such as `assetlinks.json` will have different requirements.
+To make use of the web-app-origin-association format, we suggest browsers locate it using a `<link rel="web-app-origin-association" href="/web-app-origin-association">` element in the header section of the main document at the origin's root path. Other formats such as `assetlinks.json` will have different requirements.
 
-(TODO) Alternatively, we suggest that association files could be placed in relation to the root path of the origin. In order to match an origin with a `*.` prefix, we suggest that the corresponding association file be placed relative to the root path of the domain. Eg. an origin `*.contoso.com` could have a `web-app-origin-association` file at `contoso.com/web-app-origin-association` .
+Alternatively, we suggest that association files be placed in relation to the root path of the origin. In order to match an origin with a `*.` prefix, we suggest that the corresponding association file be placed relative to the root path of the domain. Eg. an origin `*.contoso.com` could have a `web-app-origin-association` file at `contoso.com/web-app-origin-association` .
 
 #### Failure to Associate
 
