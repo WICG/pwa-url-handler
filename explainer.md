@@ -247,7 +247,7 @@ To support basic, browser-level registration of URL handlers, browsers need to m
 
 #### User preferences
 
-If URL handlers are registered and launched at the browser level, the browser should implement a URL handling config page to allow the user to enable/disable URL handlers, set default launch behavior, etc. If URL handlers are registered and launched at the OS level, the browser should implement a config page that redirects to the OS settings.
+If URL handlers are registered and launched at the browser level, the browser should allow the user to enable/disable URL handlers, set default launch behavior, etc through browser settings. If URL handlers are registered and launched at the OS level, the browser should direct the user to the OS settings.
 
 #### Handling multiple registrations
 
