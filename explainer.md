@@ -129,9 +129,11 @@ A PWA matches a URL (from link activation, navigation, or otherwise) for URL han
 
 #### Wildcard Matching
 
-A wildcard prefix can be used in `app_links` origin strings to match for different subdomains. The wildcard `*` matches one or more characters. The scheme is still assumed to be https when using a wildcard prefix.
+The wildcard character `*` can be used to match one or more characters.
 
- For eg. `*.contoso.com` matches `jadams.contoso.com` and `www.jqadams.contoso.com` but not `contoso.com` . There may be other ways of specifying a group of related origins such as [First Party Sets](https://github.com/krgovind/first-party-sets). Note that this feature would not be necessary if there was a suitable way to specify a multi-origin app scope similarly.
+A wildcard prefix can be used in `app_links` origin strings to match for different subdomains. The prefix must be `*.` for this usage. The scheme is still assumed to be https when using a wildcard prefix.
+
+For eg. `*.contoso.com` matches `tenant.contoso.com` and `www.tenant.contoso.com` but not `contoso.com` . There may be other ways of specifying a group of related origins such as [First Party Sets](https://github.com/krgovind/first-party-sets). This feature would not be necessary if there was a way to specify a multi-origin app scope with a similar matching pattern.
  
 ### web app to origin association
 
