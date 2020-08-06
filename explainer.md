@@ -221,15 +221,15 @@ To make use of the web-app-origin-association format, we suggest browsers locate
 
 #### Failure to Associate
 
-If the `web-app-origin-association` file cannot be downloaded or the association validation cannot be completed successfully, the browser may either omit the requested URL handler registrations affected or fail the PWA installation completely. The implementor should decide what is the best user experience.
+If necessary association validation cannot be completed successfully during PWA installation for any reason, the browser must not register the app as an active URL handler for the affected URLs. The browser should try to complete installation with as many valid URL handling registrations as possible.
 
 #### Periodic Revalidation
 
-Origin could modify their associations with installed PWAs by modifying their `web-app-origin-association` file at any time. Conforming browsers may revalidate registered URL handlers at appropriate intervals by re-downloading the relevant web-app-origin-association files. If a URL handler registration fails to revalidate because the web-app-origin-association data has changed or is no longer available, the implementor may disable URL handling for that app or uninstall the PWA in a way that is consistent with the behavior during initial validation.
+An origin could modify its associations with PWAs at any time. Conforming browsers must regularly attempt to revalidate the associations of installed web apps. If a URL handler registration fails to revalidate because the association data has changed or is no longer available, the browser must disable or remove registrations that are no longer valid.
 
 #### Shortened URLs
 
-Web applications often provide users with shortened URLs for convenience. If developers would like register these URLs for URL handling, they require have access to the short URL origin to place a validation file. This may not be possible with third party URL shortening services that the developer does not control.
+Web applications often provide users with shortened URLs for convenience. If developers would like register these URLs for URL handling, they need access to the short URL origin to place a validation file. This may not be possible with third party URL shortening services that the developer does not control.
 
 ### Browser Changes
 
