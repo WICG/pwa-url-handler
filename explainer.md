@@ -290,6 +290,16 @@ Although not an immediate privacy concern, fingerprinting risks should be thorou
 
 Native applications can already use OS APIs to enumerate installed applications on the user's system. For example, native applications in Windows can use the [FindAppUriHandlersAsync](https://docs.microsoft.com/en-us/uwp/api/windows.system.launcher.findappurihandlersasync) API to enumerate URL handlers. If PWAs register as OS level URL handlers in Windows, their presence would be visible to other applications.
 
+## Relation to other proposals
+
+### [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md)
+Declarative link capturing would allow a developer to opt-in all app scope URLs to link capturing behavior with simple changes to their web app manifest. If Declarative Link Capturing and URL Handling features are both available, browsers may reduce overlap in functionality by prioritizing DLC behavior over URL handling behavior: if a URL matches the app scope of an installed app with DLC enabled, there is no need to further match against the URL handling registrations of other apps.
+
+DLC aims to provide a choice of different app launch behaviors. To avoid overlap in the proposals, URL Handling should use a default, non-configurable launch behavior and support the standardization of a manifest member like `capture_links`.
+
+### [Service Worker Scope Pattern Matching](https://github.com/wanderview/service-worker-scope-pattern-matching/blob/master/explainer.md)
+This proposal uses a wildcard and pattern matching syntax that is compatible with the manifest syntax designed for scope pattern matching. If there are multiple manifest members that use URL pattern matching, URL Handling should continue to use a compatible syntax for developers' ease of use. 
+
 ## OS Specific Implementation Notes
 
 ### Windows
