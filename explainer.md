@@ -31,35 +31,35 @@ PWAs may have different levels of URL handling ability depending on the capabili
 
 ## Non-Goals
 
-* Custom URL protocol handling. A separate explainer for that can be found [here](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/master/URLProtocolHandler/explainer.md).
+* Custom URL protocol registration and handling. A separate explainer for that can be found [here](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/master/URLProtocolHandler/explainer.md).
 
-* Launching PWAs due to in-browser link navigation. Instead, this explainer focuses on scenarios where the URL activation has occurred from outside of the browser.
+* Launching PWAs due to in-browser link navigation. Capturing from navigation needs to address additional concerns around security and privacy. It is excluded here to reduce complexity. This explainer focuses on scenarios where the URL activation comes from outside the browser. Nothing written here should prevent URL handling from working on navigations in the future.
 
 ## Use Case
 
 There is one use case that we wish to address in this explainer: URL activation in native applications.
 
-The user clicks on a Spotify link in their native e-mail application, (eg., [https://open.spotify.com/album/7FA9xfqPrBaja1sEv15DU2](https://open.spotify.com/album/7FA9xfqPrBaja1sEv15DU2) in the Outlook app), which launches their default browser. Because the user already has the Spotify PWA installed and registered as a URL handler with their default browser, the URL activation launches the PWA instead of a new tab.
+The user clicks on a Spotify link in their native e-mail application, (eg., [https://open.spotify.com/album/7FA9xfqPrBaja1sEv15DU2](https://open.spotify.com/album/7FA9xfqPrBaja1sEv15DU2) in the Outlook app), which launches their default browser through the OS. Because the user already has the Spotify PWA installed and registered as a URL handler with their default browser, the URL activation launches the PWA instead of a new tab.
 
 ## Proposed Solution
-
-We propose the following:
 
 1. Modify the web app manifest specification to include an `app_links` member.
     * Allows PWAs to handle URLs from multiple different origins.
     * Allows PWA developers to opt-in to URL handling in the same way across different platforms.
 
 2. Specifying a `web-app-origin-association` file format for validating out-of-scope URL associations.
+    * Provides a web standard option for association with web apps. Does not prevent use of platform specific options.
     * Protects content owners by letting them define which PWAs are allowed to associate with their sites.
     * Gives sites control over which URLs are allowed to be handled by each associated PWA.
 
-3. If a browser is launched to handle a URL activation, it should try to launch a matching PWA to handle that URL.
+3. If a browser is launched to handle a URL activation, it should look for matching installed PWAs to handle that URL.
 
-4. If multiple PWAs match a given URL, browsers should display a disambiguation dialog to allow users to choose one for launch.
+4. If multiple PWAs match a given URL, browsers should display a disambiguation dialog to allow users to choose one or continue in a browser window.
 
 5. On OSes with adequate support, conforming browsers should register PWAs as URL handlers at the OS level instead.
+    * Allows any native app, including browsers, to launch participating PWAs using OS URL launch.
 
-**Changes 1-4** allow PWAs to handle URL activations at the browser level, which means that as long as a URL activation (clicking on a link) launches a conforming browser, the browser has the ability to launch the matching PWA. A PWA will not be launched if it was installed through a non-default browser and all URL activations launch the default browser.
+**Changes 1-4** allow PWAs to handle URL activations at the browser level without needing to integrate with the OS. As long as a URL activation (clicking on a link) launches a conforming browser, the browser has the ability to launch the matching PWA. A PWA will not be launched through URL activations from the OS if it is not known to the default browser.
 
 To allow PWAs to handle URLs that are outside of their own scope, it is necessary to introduce a mechanism for the owner of those URLs to opt-in to URL handling by PWAs. **Change 2** introduces the concept of a `web-app-origin-association` file that will serve this purpose. This file is similar to the [Apple App Site Association File](https://developer.apple.com/documentation/safariservices/supporting_associated_domains_in_your_app#3001215), the [`assetlinks.json`](https://developer.android.com/training/app-links/verify-site-associations) file in Android, and the [`windows-app-web-link`](https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking#associate-your-app-and-website-with-a-json-file) file in Windows. What differs, is that the `web-app-origin-association` file does not require a platform specific app id, but instead identifies PWAs by their web app manifest URL.
 
@@ -67,9 +67,13 @@ To allow PWAs to handle URLs that are outside of their own scope, it is necessar
 
 ### Manifest Changes
 
-We propose adding a new _optional_ member `app_links` to the manifest object. This member is an array of strings. Each string represents an origin. Origin strings are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that are from these origins could be handled by this web app.
+| Field       | Required / Optional | Description                                   | Type     | Default |
+| :---------- | :------------------ | :-------------------------------------------- | :------- | :------ |
+| `app_links` | Optional            | Origins of URLs that the app wishes to handle | string[] | `[]`    |
 
-`app_links` origin strings are requests from the PWA to handle URLs from those origins. The browser should validate with each origin that the PWA has the authority to handle those URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app lifecycle.
+We propose adding a new _optional_ member `app_links` to the manifest object, of type `string[]`.  Each string represents an origin. Origin strings are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that are from these origins could be handled by this web app.
+
+`app_links` origin strings are requests from the PWA to handle URLs from those origins. The browser should validate with each origin that the app is recognized and if so retrieve the patterns for allowed URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app.
 
 Example web app manifest at `https://contoso.com/manifest.json` :
 
