@@ -146,8 +146,6 @@ Browsers must validate a handshake between a PWA and an origin to successfully r
 
 We propose an association json file format that origins could use for the handshake. On different platforms that have native association formats (such as assetlinks.json in Android or apple-app-site-association in iOS) browsers should have the freedom to implement validation using those alternatives.
 
-TODO: special case for sub-domain wildcard prefix.
-
 #### web-app-origin-association file
 
 Example 1: web-app-origin-association file at both `www.contoso.com/web-app-origin-association.json` and `https://conto.so/web-app-origin-association.json` :
@@ -222,9 +220,9 @@ Each `handle_urls` contains:
 
 #### File Location
 
-To make use of the web-app-origin-association format, we suggest browsers locate it using a `<link rel="web-app-origin-association" href="/web-app-origin-association">` element in the header section of the main document at the origin's root path. Other formats such as `assetlinks.json` will have different requirements.
+To make use of the web-app-origin-association file, we suggest browsers locate it using a `<link rel="web-app-origin-association" href="/web-app-origin-association">` element in the header section of the main document at the origin's root path. Other formats such as `assetlinks.json` will have different requirements.
 
-Alternatively, we suggest that association files be placed in relation to the root path of the origin. In order to match an origin with a `*.` prefix, we suggest that the corresponding association file be placed relative to the root path of the domain. Eg. an origin `*.contoso.com` could have a `web-app-origin-association` file at `contoso.com/web-app-origin-association` .
+Alternatively, we suggest that association files be placed in relation to the root path of the origin. In order to match an origin with a `*.` prefix, we suggest that the corresponding association file be placed relative to the root path of the domain. Eg. an origin `*.contoso.com` could have a `web-app-origin-association` file at `contoso.com/web-app-origin-association`.
 
 #### Failure to Associate
 
@@ -244,15 +242,15 @@ To support basic, browser-level registration of URL handlers, browsers should ma
 
 1. Validate and register the `app_links` data from PWA manifests during PWA installation and periodically revalidate installed apps.
 
-2. Perform adequate validation to address security and privacy concerns, but may do so using the web-app-origin-association file or other methods of their choosing. 
+2. Perform adequate validation to address security and privacy concerns. They may do so using a web-app-origin-association file or another method of their choosing. 
 
 3. When starting with a URL parameter, determine if there are any matching PWA URL handlers.
 
    * If there is a match, launch the PWA and load the URL in a new standalone window instead of the browser window.
 
-   * If the launch URL is not within the app scope, browsers can delegate to a document event handler. If there is an existing app window with a loaded document, browsers can try to find a suitable event handler there. If not found, the browser could fall back to opening a new app window, waiting for a document to load, and looking for a suitable event handler.  
+   * If the launch URL is not within the app scope, browsers can delegate to a document event handler. If there is an existing app window with a loaded document, browsers can try to find a suitable event handler there. If not found, the browser could fall back to opening a new app window, waiting for a document to load, then looking for a suitable event handler.  
 
-   * If there is a manifest member that specifies a behavior for launching web apps from link activations (for eg. `capture_links` in [Declarative Link Capture](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md)), app launch should try to follow that behavior instead.
+   * If there is a manifest member that specifies a behavior for launching web apps from link activations (for eg. `capture_links` in [Declarative Link Capture](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md)), app launch should try to follow that launch behavior specification.
 
    * If there is more than one match, display the choices and collect the user's input with a disambiguation dialog.
 
@@ -268,7 +266,7 @@ The association file is able to contain association objects for multiple PWA han
 
 ### Operating System Changes
 
-To provide OS level registration of URL handlers, browsers' PWA implementations need to integrate more deeply with the OS application platform. This is to allow the OS to recognize PWAs as apps that can be launched and can therefore serve as URL handlers. There may be different approaches to accomplishing this, and they might differ on different OSes. OS changes may be necessary to enable this integration. In OS or browser versions where this integration cannot be implemented, the behavior should default to URL handling by the browser.
+To provide OS level registration of URL handlers, browsers' PWA implementations need to integrate more deeply with the OS application platform. This is to allow the OS to recognize PWAs as apps that can be launched and can therefore serve as URL handlers. There may be different approaches to accomplishing this with different OS platforms. OS changes may be necessary to enable this integration. In OS or browser versions where this integration cannot be implemented, the behavior should default to URL handling by the browser.
 
 ## Security Considerations
 
@@ -292,12 +290,12 @@ Native applications can already use OS APIs to enumerate installed applications 
 
 ## Relation to other proposals
 
-### [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md)
-Declarative link capturing would allow a developer to opt-in all app scope URLs to link capturing behavior with simple changes to their web app manifest. If Declarative Link Capturing and URL Handling features are both available, browsers may reduce overlap in functionality by prioritizing DLC behavior over URL handling behavior: if a URL matches the app scope of an installed app with DLC enabled, there is no need to further match against the URL handling registrations of other apps.
+### [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) (DLC)
+[Declarative link capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) would allow a developer to opt-in all app scope URLs to link capturing behavior with simple changes to their web app manifest. If Declarative Link Capturing and URL Handling features are both available, browsers may reduce overlap in functionality by prioritizing DLC behavior over URL handling behavior: if a URL matches the app scope of an installed app with DLC enabled, there is no need to further match against the URL handling registrations of other apps.
 
 DLC aims to provide a choice of different app launch behaviors. To avoid overlap in the proposals, URL Handling should use a default, non-configurable launch behavior and support the standardization of a manifest member like `capture_links`.
 
-### [Service Worker Scope Pattern Matching](https://github.com/wanderview/service-worker-scope-pattern-matching/blob/master/explainer.md)
+### [Service Worker Scope Pattern Matching](https://github.com/wanderview/service-worker-scope-pattern-matching/blob/master/explainer.md) (SWSPM)
 This proposal uses a wildcard and pattern matching syntax that is compatible with the manifest syntax designed for scope pattern matching. If there are multiple manifest members that use URL pattern matching, URL Handling should continue to use a compatible syntax for developers' ease of use. 
 
 ## OS Specific Implementation Notes
@@ -327,4 +325,4 @@ Other browsers (e.g., Edge) on Android are able to add PWAs to the home screen b
 
 ## Open Questions
 
-* Is sub-domain prefix ( `*.contoso.com` ) a valuable feature for `app_links` in the manifest change? 
+* In order to validate an origin with sub-domain wildcard prefix ( `*.contoso.com` ), is it reasonable to locate the validation file relative to the domain? This breaks from the assumption that the domain and its sub-domains are separate origins and may have further security implications.
