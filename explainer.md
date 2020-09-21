@@ -148,7 +148,7 @@ For eg. `*.contoso.com` matches `tenant.contoso.com` and `www.tenant.contoso.com
 
 Browsers must validate a handshake between a PWA and an origin to successfully register URL handlers. Origins can declare associations with specific web apps to complete this handshake. Web apps can be identified by their manifest URL currently before a [unique identifier](https://github.com/w3c/manifest/issues/586) is standardized. An origin should be allowed to specify URL patterns to fine-tune URL paths for URL handling.
 
-We propose an association json file format that origins could use for the handshake. On different platforms that have native association formats (such as assetlinks.json in Android or apple-app-site-association in iOS) browsers should have the freedom to implement validation using those alternatives.
+We propose a platform-independent association json file format that origins could use for the handshake.
 
 #### web-app-origin-association file
 
