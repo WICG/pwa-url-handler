@@ -89,10 +89,6 @@ Example web app manifest at `https://contoso.com/manifest.json` :
         }
     ],
     "capture_links": "existing_client_event",
-    "capture_links_exclude_paths": [
-        "/about",
-        "/blog"
-    ],
     "url_handlers" : [
         {
             "origin": "contoso.com"
@@ -121,10 +117,6 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
         }
     ],
     "capture_links": "existing_client_event",
-    "capture_links_exclude_paths": [
-        "/about",
-        "/blog"
-    ],
     "url_handlers": [
         {
             "origin": "contoso.com"
@@ -139,7 +131,7 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
 }
 ```
 
-(`capture_link` and `capture_links_exclude_paths` from the [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) proposal added to examples for comparison.)
+(`capture_link` from the [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) proposal added to examples for comparison.)
 
 A PWA matches a URL for URL handling if the URL matches one of the origin strings in `url_handlers` and the browser is able to validate that the origin agrees to let this app handle such a URL.
 
