@@ -1,6 +1,6 @@
 # PWAs as URL Handlers
 
-Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt; luhua@microsoft.com&gt; 
+Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt; luhua@microsoft.com&gt;
 
 Input from: [Mike Jackson](mailto:mjackson@microsoft.com), [Mandy Chen](mailto:mandy.chen@microsoft.com), [Howard Wolosky](mailto:howard.wolosky@microsoft.com), [Matt Giuca](mailto:mgiuca@google.com)
 
@@ -133,7 +133,7 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
 
 (`capture_link` and `capture_links_exclude_paths` from the [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) proposal added to examples for comparison.)
 
-A PWA matches a URL for URL handling if the URL matches one of the origin strings in `app_links` and the browser is able to validate that the origin agrees to let this app handle such a URL. 
+A PWA matches a URL for URL handling if the URL matches one of the origin strings in `app_links` and the browser is able to validate that the origin agrees to let this app handle such a URL.
 
 `app_links` can contain an origin that encompasses requesting PWA's scope and also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `app_links` requests can be validated with origins. Navigation redirection is not a good alternative with respect to offline scenarios.
 
@@ -144,7 +144,7 @@ The wildcard character `*` can be used to match one or more characters.
 A wildcard prefix can be used in `app_links` origin strings to match for different subdomains. The prefix must be `*.` for this usage. The scheme is still assumed to be https when using a wildcard prefix.
 
 For eg. `*.contoso.com` matches `tenant.contoso.com` and `www.tenant.contoso.com` but not `contoso.com` . There may be other ways of specifying a group of related origins such as [First Party Sets](https://github.com/krgovind/first-party-sets). This feature would not be necessary if there was a way to specify a multi-origin app scope with a similar matching pattern.
- 
+
 ### web app to origin association
 
 Browsers must validate a handshake between a PWA and an origin to successfully register URL handlers. Origins can declare associations with specific web apps to complete this handshake. Web apps can be identified by their manifest URL currently before a [unique identifier](https://github.com/w3c/manifest/issues/586) is standardized. An origin should be allowed to specify URL patterns to fine-tune URL paths for URL handling.
@@ -251,7 +251,7 @@ To support basic, browser-level registration of URL handlers, browsers should ma
 
 1. Validate and register the `app_links` data from PWA manifests during PWA installation and periodically revalidate installed apps.
 
-2. Perform adequate validation to address security and privacy concerns. They may do so using a web-app-origin-association file or another method of their choosing. 
+2. Perform adequate validation to address security and privacy concerns. They may do so using a web-app-origin-association file or another method of their choosing.
 
 3. When starting with a URL parameter, determine if there are any matching PWA URL handlers.
 
@@ -300,12 +300,14 @@ Native applications can already use OS APIs to enumerate installed applications 
 ## Relation to other proposals
 
 ### [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) (DLC)
+
 [Declarative link capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) would allow a developer to opt-in all app scope URLs to link capturing behavior with simple changes to their web app manifest. If Declarative Link Capturing and URL Handling features are both available, browsers may reduce overlap in functionality by prioritizing DLC behavior over URL handling behavior: if a URL matches the app scope of an installed app with DLC enabled, there is no need to further match against the URL handling registrations of other apps.
 
 DLC aims to provide a choice of different app launch behaviors. To avoid overlap in the proposals, URL Handling should use a default, non-configurable launch behavior and support the standardization of a manifest member like `capture_links`.
 
 ### [Service Worker Scope Pattern Matching](https://github.com/wanderview/service-worker-scope-pattern-matching/blob/master/explainer.md) (SWSPM)
-This proposal uses a wildcard and pattern matching syntax that is compatible with the manifest syntax designed for scope pattern matching. If there are multiple manifest members that use URL pattern matching, URL Handling should continue to use a compatible syntax for developers' ease of use. 
+
+This proposal uses a wildcard and pattern matching syntax that is compatible with the manifest syntax designed for scope pattern matching. If there are multiple manifest members that use URL pattern matching, URL Handling should continue to use a compatible syntax for developers' ease of use.
 
 ## OS Specific Implementation Notes
 
@@ -315,22 +317,22 @@ This proposal uses a wildcard and pattern matching syntax that is compatible wit
 
 ### Android
 
-* Chrome installs a PWA on Android by generating and installing a [WebAPK](https://developers.google.com/web/fundamentals/integration/webapks). 
-* When a Chrome PWA is installed on Android, it can [register a set of intent filters](https://developers.google.com/web/fundamentals/integration/webapks?hl=ro#android_intent_filters) for all URLs within the scope of the app. 
-* This means that Chrome PWAs already handle associated URLs on Android at the OS level using intent filters. This is also known as Deep Linking. 
-* Additionally, Android apps are also able to register to be URL handlers by using Android App Links. 
-* App Links require server side verification of the relationship to the app while Deep Links do not. 
+* Chrome installs a PWA on Android by generating and installing a [WebAPK](https://developers.google.com/web/fundamentals/integration/webapks).
+* When a Chrome PWA is installed on Android, it can [register a set of intent filters](https://developers.google.com/web/fundamentals/integration/webapks?hl=ro#android_intent_filters) for all URLs within the scope of the app.
+* This means that Chrome PWAs already handle associated URLs on Android at the OS level using intent filters. This is also known as Deep Linking.
+* Additionally, Android apps are also able to register to be URL handlers by using Android App Links.
+* App Links require server side verification of the relationship to the app while Deep Links do not.
 * Deep Linking will show an app picker but App Linking will take the user directly to the app.
 
 Other browsers (e.g., Edge) on Android are able to add PWAs to the home screen but are not able to register intent filters. They likely need to also be able to use a WebAPK implementation or similar to enable URL handling.
 
 ### iOS, MacOS
 
-* iOS allows the association of apps to websites using [Universal Links](https://developer.apple.com/ios/universal-links/). 
-* Newer versions of MacOS also support Universal Links. 
+* iOS allows the association of apps to websites using [Universal Links](https://developer.apple.com/ios/universal-links/).
+* Newer versions of MacOS also support Universal Links.
 * Safari implements a subset of PWA features.
-* Safari is currently the only browser able to install a PWA as an iOS app. 
-* Universal links/link capturing is not available to iOS PWAs. 
+* Safari is currently the only browser able to install a PWA as an iOS app.
+* Universal links/link capturing is not available to iOS PWAs.
 
 ## Open Questions
 
