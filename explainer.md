@@ -43,7 +43,7 @@ The user clicks on a Spotify link in their native e-mail application, (eg., [htt
 
 ## Proposed Solution
 
-1. Modify the web app manifest specification to include an `app_links` member.
+1. Modify the web app manifest specification to include an `url_handlers` member.
     * Allows PWAs to handle URLs from multiple different origins.
     * Allows PWA developers to opt-in to URL handling in the same way across different platforms.
 
@@ -69,11 +69,11 @@ To allow PWAs to handle URLs that are outside of their own scope, it is necessar
 
 | Field       | Required / Optional | Description                                   | Type     | Default |
 | :---------- | :------------------ | :-------------------------------------------- | :------- | :------ |
-| `app_links` | Optional            | Origins of URLs that the app wishes to handle | object[] | `[]`    |
+| `url_handlers` | Optional            | Origins of URLs that the app wishes to handle | object[] | `[]`    |
 
-We propose adding a new _optional_ member `app_links` to the manifest object of `object[]` type. Each object in `app_links` contains a `origin` string, which is a pattern for matching origins. These patterns are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that match these origins could be handled by this web app.
+We propose adding a new _optional_ member `url_handlers` to the manifest object of `object[]` type. Each object in `url_handlers` contains a `origin` string, which is a pattern for matching origins. These patterns are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that match these origins could be handled by this web app.
 
-Each `app_links` object is a request from the PWA to handle URLs from a specific origin or origins. The browser should validate with each origin that the app is recognized and if so retrieve the patterns for allowed URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app.
+Each `url_handlers` object is a request from the PWA to handle URLs from a specific origin or origins. The browser should validate with each origin that the app is recognized and if so retrieve the patterns for allowed URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app.
 
 Example web app manifest at `https://contoso.com/manifest.json` :
 
@@ -93,7 +93,7 @@ Example web app manifest at `https://contoso.com/manifest.json` :
         "/about",
         "/blog"
     ],
-    "app_links" : [
+    "url_handlers" : [
         {
             "origin": "contoso.com"
         },
@@ -125,7 +125,7 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
         "/about",
         "/blog"
     ],
-    "app_links": [
+    "url_handlers": [
         {
             "origin": "contoso.com"
         },
@@ -141,15 +141,15 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
 
 (`capture_link` and `capture_links_exclude_paths` from the [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) proposal added to examples for comparison.)
 
-A PWA matches a URL for URL handling if the URL matches one of the origin strings in `app_links` and the browser is able to validate that the origin agrees to let this app handle such a URL.
+A PWA matches a URL for URL handling if the URL matches one of the origin strings in `url_handlers` and the browser is able to validate that the origin agrees to let this app handle such a URL.
 
-`app_links` can contain an origin that encompasses requesting PWA's scope and also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `app_links` requests can be validated with origins. Navigation redirection is not a good alternative with respect to offline scenarios.
+`url-handlers` can contain an origin that encompasses requesting PWA's scope and also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `url_handlers` requests can be validated with origins. Navigation redirection is not a good alternative with respect to offline scenarios.
 
 #### Wildcard Matching
 
 The wildcard character `*` can be used to match one or more characters.
 
-A wildcard prefix can be used in `app_links` origin strings to match for different subdomains. The prefix must be `*.` for this usage. The scheme is still assumed to be https when using a wildcard prefix.
+A wildcard prefix can be used in `url_handlers` origin strings to match for different subdomains. The prefix must be `*.` for this usage. The scheme is still assumed to be https when using a wildcard prefix.
 
 For eg. `*.contoso.com` matches `tenant.contoso.com` and `www.tenant.contoso.com` but not `contoso.com` . There may be other ways of specifying a group of related origins such as [First Party Sets](https://github.com/krgovind/first-party-sets). This feature would not be necessary if there was a way to specify a multi-origin app scope with a similar matching pattern.
 
@@ -257,7 +257,7 @@ Web applications often provide users with shortened URLs for convenience. If dev
 
 To support basic, browser-level registration of URL handlers, browsers should make the following changes:
 
-1. Validate and register the `app_links` data from PWA manifests during PWA installation and periodically revalidate installed apps.
+1. Validate and register the `url_handlers` data from PWA manifests during PWA installation and periodically revalidate installed apps.
 
 2. Perform adequate validation to address security and privacy concerns. They may do so using a web-app-origin-association file or another method of their choosing.
 
@@ -293,7 +293,7 @@ If a browser registers apps with the OS as URL handlers, the OS must trust that 
 
 If an associated site is overtaken by a malicious actor, it is possible for users to be exposed to malicious content through the PWA handling those URLs. To mitigate this risk, the browser may want to suppress the PWA launch or get user confirmation using a security mechanism which detects risky URLs.
 
-Conforming browsers may want to limit the maximum processed entries of `app_links` to N and the numbers of allowed and disallowed paths (in `web-app-origin-association` or equivalent) each to M. This will limit the amount of work the manifest parser does and further limit the risk of URL hijacking.
+Conforming browsers may want to limit the maximum processed entries of `url_handlers` to N and the numbers of allowed and disallowed paths (in `web-app-origin-association` or equivalent) each to M. This will limit the amount of work the manifest parser does and further limit the risk of URL hijacking.
 
 URL handler registrations should only be performed for installed PWAs as users expect installed applications to be more deeply integrated with the OS. Furthermore, conforming browsers should not activate PWAs as URL handlers for any URL without an explicit user confirmation.
 
