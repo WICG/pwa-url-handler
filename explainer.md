@@ -1,6 +1,6 @@
 # PWAs as URL Handlers
 
-Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt; luhua@microsoft.com&gt; 
+Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt; luhua@microsoft.com&gt;
 
 Input from: [Mike Jackson](mailto:mjackson@microsoft.com), [Mandy Chen](mailto:mandy.chen@microsoft.com), [Howard Wolosky](mailto:howard.wolosky@microsoft.com), [Matt Giuca](mailto:mgiuca@google.com)
 
@@ -43,16 +43,16 @@ The user clicks on a Spotify link in their native e-mail application, (eg., [htt
 
 ## Proposed Solution
 
-1. Modify the web app manifest specification to include an `app_links` member.
+1. Modify the web app manifest specification to include an `url_handlers` member.
     * Allows PWAs to handle URLs from multiple different origins.
     * Allows PWA developers to opt-in to URL handling in the same way across different platforms.
 
 2. Specifying a `web-app-origin-association` file format for validating out-of-scope URL associations.
-    * Provides a web standard option for association with web apps. Does not prevent use of platform specific options.
+    * Provides a web standard option for association with web apps.
     * Protects content owners by letting them define which PWAs are allowed to associate with their sites.
-    * Gives sites control over which URLs are allowed to be handled by each associated PWA.
+    * Gives content owners control over which URLs are allowed to be handled by each associated PWA.
 
-3. If a browser is launched to handle a URL activation, it should look for matching installed PWAs to handle that URL.
+3. If a browser is launched to handle a URL activation, it should look for matching, installed PWAs to handle that URL.
 
 4. If multiple PWAs match a given URL, browsers should display a disambiguation dialog to allow users to choose one or continue in a browser window.
 
@@ -61,7 +61,7 @@ The user clicks on a Spotify link in their native e-mail application, (eg., [htt
 
 **Changes 1-4** allow PWAs to handle URL activations at the browser level without needing to integrate with the OS. As long as a URL activation (clicking on a link) launches a conforming browser, the browser has the ability to launch the matching PWA. A PWA will not be launched through URL activations from the OS if it is not known to the default browser.
 
-To allow PWAs to handle URLs that are outside of their own scope, it is necessary to introduce a mechanism for the owner of those URLs to opt-in to URL handling by PWAs. **Change 2** introduces the concept of a `web-app-origin-association` file that will serve this purpose. This file is similar to the [Apple App Site Association File](https://developer.apple.com/documentation/safariservices/supporting_associated_domains_in_your_app#3001215), the [`assetlinks.json`](https://developer.android.com/training/app-links/verify-site-associations) file in Android, and the [`windows-app-web-link`](https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking#associate-your-app-and-website-with-a-json-file) file in Windows. What differs, is that the `web-app-origin-association` file does not require a platform specific app id, but instead identifies PWAs by their web app manifest URL.
+To allow PWAs to handle URLs that are outside of their own scope, it is necessary to introduce a mechanism for the owner of those URLs to opt-in to URL handling by PWAs. **Change 2** introduces the concept of a `web-app-origin-association` file that will serve this purpose. This file is similar to the [Apple App Site Association File](https://developer.apple.com/documentation/safariservices/supporting_associated_domains_in_your_app#3001215), the [`assetlinks.json`](https://developer.android.com/training/app-links/verify-site-associations) file in Android, and the [`windows-app-web-link`](https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking#associate-your-app-and-website-with-a-json-file) file in Windows. What differs is that the `web-app-origin-association` file does not reference PWAs using a platform-specific app id but by their web app manifest URL.
 
 **Change 5** will also allow PWAs to handle URL activations at the OS level on supporting platforms. If the PWA is able to register as a URL handler with the OS, it could be launched whenever a URL activation is handled by the OS, regardless of the default browser setting. Most native applications rely on the OS for URL activation. In terms of user experience, the OS could now prompt the user to choose between the PWA and the default browser using the system app disambiguation dialog. The user is able to make an explicit choice to select the PWA and configure their default setting from there. (Implementation note: because most OSes do not know of or treat PWAs as first-class applications, it may not be possible to register them directly with the OS as URL handlers. Supporting changes will need to be made in PWA implementation and/or in the OS to enable this. A notable exception is Chrome's implementation of PWAs on Android using `WebAPK` . Because `WebAPK` s are recognized by the Android OS, Chrome PWAs are able to fully integrate with OS features like the app picker.)
 
@@ -69,11 +69,11 @@ To allow PWAs to handle URLs that are outside of their own scope, it is necessar
 
 | Field       | Required / Optional | Description                                   | Type     | Default |
 | :---------- | :------------------ | :-------------------------------------------- | :------- | :------ |
-| `app_links` | Optional            | Origins of URLs that the app wishes to handle | string[] | `[]`    |
+| `url_handlers` | Optional            | Origins of URLs that the app wishes to handle | object[] | `[]`    |
 
-We propose adding a new _optional_ member `app_links` to the manifest object, of type `string[]`.  Each string represents an origin. Origin strings are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that are from these origins could be handled by this web app.
+We propose adding a new _optional_ member `url_handlers` to the manifest object of `object[]` type. Each object in `url_handlers` contains a `origin` string, which is a pattern for matching origins. These patterns are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that match these origins could be handled by this web app.
 
-`app_links` origin strings are requests from the PWA to handle URLs from those origins. The browser should validate with each origin that the app is recognized and if so retrieve the patterns for allowed URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app.
+Each `url_handlers` object is a request from the PWA to handle URLs from a specific origin or origins. The browser should validate with each origin that the app is recognized and if so retrieve the patterns for allowed URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app.
 
 Example web app manifest at `https://contoso.com/manifest.json` :
 
@@ -89,14 +89,16 @@ Example web app manifest at `https://contoso.com/manifest.json` :
         }
     ],
     "capture_links": "existing_client_event",
-    "capture_links_exclude_paths": [
-        "/about",
-        "/blog"
-    ],
-    "app_links": [
-        "contoso.com",
-        "conto.so",
-        "*.contoso.com"
+    "url_handlers" : [
+        {
+            "origin": "contoso.com"
+        },
+        {
+            "origin": "conto.so"
+        },
+        {
+            "origin": "*.contoso.com"
+        }
     ]
 }
 ```
@@ -115,104 +117,111 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
         }
     ],
     "capture_links": "existing_client_event",
-    "capture_links_exclude_paths": [
-        "/about",
-        "/blog"
-    ],
-    "app_links": [
-        "contoso.com",
-        "conto.so",
-        "*.contoso.com"
+    "url_handlers": [
+        {
+            "origin": "contoso.com"
+        },
+        {
+            "origin": "conto.so"
+        },
+        {
+            "origin": "*.contoso.com"
+        }
     ]
 }
 ```
-(`capture_link` and `capture_links_exclude_paths` from the [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) proposal added to examples for comparison.)
 
-A PWA matches a URL for URL handling if the URL matches one of the origin strings in `app_links` and the browser is able to validate that the origin agrees to let this app handle such a URL. 
+(`capture_link` from the [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) proposal added to examples for comparison.)
 
-`app_links` can contain an origin that encompasses requesting PWA's scope and also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `app_links` requests can be validated with origins. Navigation redirection is not a good alternative with respect to offline scenarios.
+A PWA matches a URL for URL handling if the URL matches one of the origin strings in `url_handlers` and the browser is able to validate that the origin agrees to let this app handle such a URL.
+
+`url-handlers` can contain an origin that encompasses requesting PWA's scope and also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `url_handlers` requests can be validated with origins. Navigation redirection is not a good alternative with respect to offline scenarios.
 
 #### Wildcard Matching
 
 The wildcard character `*` can be used to match one or more characters.
 
-A wildcard prefix can be used in `app_links` origin strings to match for different subdomains. The prefix must be `*.` for this usage. The scheme is still assumed to be https when using a wildcard prefix.
+A wildcard prefix can be used in `url_handlers` origin strings to match for different subdomains. The prefix must be `*.` for this usage. The scheme is still assumed to be https when using a wildcard prefix.
 
 For eg. `*.contoso.com` matches `tenant.contoso.com` and `www.tenant.contoso.com` but not `contoso.com` . There may be other ways of specifying a group of related origins such as [First Party Sets](https://github.com/krgovind/first-party-sets). This feature would not be necessary if there was a way to specify a multi-origin app scope with a similar matching pattern.
- 
+
 ### web app to origin association
 
 Browsers must validate a handshake between a PWA and an origin to successfully register URL handlers. Origins can declare associations with specific web apps to complete this handshake. Web apps can be identified by their manifest URL currently before a [unique identifier](https://github.com/w3c/manifest/issues/586) is standardized. An origin should be allowed to specify URL patterns to fine-tune URL paths for URL handling.
 
-We propose an association json file format that origins could use for the handshake. On different platforms that have native association formats (such as assetlinks.json in Android or apple-app-site-association in iOS) browsers should have the freedom to implement validation using those alternatives.
+We propose a platform-independent association json file format that origins could use for the handshake.
 
 #### web-app-origin-association file
 
 Example 1: web-app-origin-association file at both `www.contoso.com/web-app-origin-association.json` and `https://conto.so/web-app-origin-association.json` :
 
 ``` json
-[
-    {
-        "manifest": "https://contoso.com/manifest.json",
-        "handle_urls": {
-            "paths": [
-                "/*"
-            ],
-            "exclude_paths": [
-                "/blog",
-                "/about"
-            ]
+{
+    "web_apps": [
+        {
+            "manifest": "https://contoso.com/manifest.json",
+            "details": {
+                "paths": [
+                    "/*"
+                ],
+                "exclude_paths": [
+                    "/blog",
+                    "/about"
+                ]
+            }
+        },
+        {
+            "manifest": "https://partnerapp.com/manifest.json",
+            "details": {
+                "paths": [
+                    "/public/data/*"
+                ]
+            }
         }
-    },
-    {
-        "manifest": "https://partnerapp.com/manifest.json",
-        "handle_urls": {
-            "paths": [
-                "/public/data/*"
-            ]
-        }
-    }
-]
+    ]
+}
 ```
 
 Example 2: web-app-origin-association file at `https://tenant.contoso.com/web-app-origin-association.json` :
 
 ``` json
-[
-    {
-        "manifest": "https://contoso.com/manifest.json",
-        "handle_urls": {
-            "paths": [
-                "/*"
-            ],
-            "exclude_paths": [
-                "/only/for/partnerapp/*"
-            ]
+{
+    "web_apps": [
+        {
+            "manifest": "https://contoso.com/manifest.json",
+            "details": {
+                "paths": [
+                    "/*"
+                ],
+                "exclude_paths": [
+                    "/only/for/partnerapp/*"
+                ]
+            }
+        },
+        {
+            "manifest": "https://partnerapp.com/manifest.json",
+            "details": {
+                "paths": [
+                    "/*"
+                ]
+            }
         }
-    },
-    {
-        "manifest": "https://partnerapp.com/manifest.json",
-        "handle_urls": {
-            "paths": [
-                "/*"
-            ]
-        }
-    }
-]
+    ]
+}
 ```
 
 Example 1 shows that the origins `https://contoso.com` and `https://conto.so` can both use the same file to associate with the PWA that has a web app manifest at `www.contoso.com/manifest.json` . In practice, the file at `contoso.so` could be a redirect.
 
 Example 2 shows that the origin `https://tenant.contoso.com` allows the PWAs with web app manifests at `https://contoso.com/manifest.json` and `https://partnerapp.com/manifest.json` to handle a subset of its URLs.
 
-The top level structure is an array of objects. Each object represents an entry for a unique web app. Each object contains:
+This file must contain valid JSON. The top-level structure is an object, with a member named `web_apps`. `web_apps` is an array of objects and each object represents an entry for a unique web app. Each object contains:
 
 | Field         | Required / Optional | Description                                              | Type   | Default |
 | :------------ | :------------------ | :------------------------------------------------------- | :----- | :------ |
 | `manifest`    | Required            | URL string of the web app manifest of the associated PWA | string | N/A     |
-| `handle_urls` | Optional            | Contains arrays of URL patterns                          | object | N/A     |
+| `details`     | Optional            | Contains arrays of URL patterns                          | object | N/A     |
 
-Each `handle_urls` contains:
+Each `details` object contains:
 | Field           | Required / Optional | Description                      | Type     | Default |
 | :-------------- | :------------------ | :------------------------------- | :------- | :------ |
 | `paths`         | Optional            | Array of allowed path strings    | string[] | `[]`    |
@@ -240,9 +249,9 @@ Web applications often provide users with shortened URLs for convenience. If dev
 
 To support basic, browser-level registration of URL handlers, browsers should make the following changes:
 
-1. Validate and register the `app_links` data from PWA manifests during PWA installation and periodically revalidate installed apps.
+1. Validate and register the `url_handlers` data from PWA manifests during PWA installation and periodically revalidate installed apps.
 
-2. Perform adequate validation to address security and privacy concerns. They may do so using a web-app-origin-association file or another method of their choosing. 
+2. Perform adequate validation to address security and privacy concerns. They may do so using a web-app-origin-association file or another method of their choosing.
 
 3. When starting with a URL parameter, determine if there are any matching PWA URL handlers.
 
@@ -276,7 +285,7 @@ If a browser registers apps with the OS as URL handlers, the OS must trust that 
 
 If an associated site is overtaken by a malicious actor, it is possible for users to be exposed to malicious content through the PWA handling those URLs. To mitigate this risk, the browser may want to suppress the PWA launch or get user confirmation using a security mechanism which detects risky URLs.
 
-Conforming browsers may want to limit the maximum processed entries of `app_links` to N and the numbers of allowed and disallowed paths (in `web-app-origin-association` or equivalent) each to M. This will limit the amount of work the manifest parser does and further limit the risk of URL hijacking.
+Conforming browsers may want to limit the maximum processed entries of `url_handlers` to N and the numbers of allowed and disallowed paths (in `web-app-origin-association` or equivalent) each to M. This will limit the amount of work the manifest parser does and further limit the risk of URL hijacking.
 
 URL handler registrations should only be performed for installed PWAs as users expect installed applications to be more deeply integrated with the OS. Furthermore, conforming browsers should not activate PWAs as URL handlers for any URL without an explicit user confirmation.
 
@@ -291,12 +300,14 @@ Native applications can already use OS APIs to enumerate installed applications 
 ## Relation to other proposals
 
 ### [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) (DLC)
+
 [Declarative link capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) would allow a developer to opt-in all app scope URLs to link capturing behavior with simple changes to their web app manifest. If Declarative Link Capturing and URL Handling features are both available, browsers may reduce overlap in functionality by prioritizing DLC behavior over URL handling behavior: if a URL matches the app scope of an installed app with DLC enabled, there is no need to further match against the URL handling registrations of other apps.
 
 DLC aims to provide a choice of different app launch behaviors. To avoid overlap in the proposals, URL Handling should use a default, non-configurable launch behavior and support the standardization of a manifest member like `capture_links`.
 
 ### [Service Worker Scope Pattern Matching](https://github.com/wanderview/service-worker-scope-pattern-matching/blob/master/explainer.md) (SWSPM)
-This proposal uses a wildcard and pattern matching syntax that is compatible with the manifest syntax designed for scope pattern matching. If there are multiple manifest members that use URL pattern matching, URL Handling should continue to use a compatible syntax for developers' ease of use. 
+
+This proposal uses a wildcard and pattern matching syntax that is compatible with the manifest syntax designed for scope pattern matching. If there are multiple manifest members that use URL pattern matching, URL Handling should continue to use a compatible syntax for developers' ease of use.
 
 ## OS Specific Implementation Notes
 
@@ -306,22 +317,22 @@ This proposal uses a wildcard and pattern matching syntax that is compatible wit
 
 ### Android
 
-* Chrome installs a PWA on Android by generating and installing a [WebAPK](https://developers.google.com/web/fundamentals/integration/webapks). 
-* When a Chrome PWA is installed on Android, it can [register a set of intent filters](https://developers.google.com/web/fundamentals/integration/webapks?hl=ro#android_intent_filters) for all URLs within the scope of the app. 
-* This means that Chrome PWAs already handle associated URLs on Android at the OS level using intent filters. This is also known as Deep Linking. 
-* Additionally, Android apps are also able to register to be URL handlers by using Android App Links. 
-* App Links require server side verification of the relationship to the app while Deep Links do not. 
+* Chrome installs a PWA on Android by generating and installing a [WebAPK](https://developers.google.com/web/fundamentals/integration/webapks).
+* When a Chrome PWA is installed on Android, it can [register a set of intent filters](https://developers.google.com/web/fundamentals/integration/webapks?hl=ro#android_intent_filters) for all URLs within the scope of the app.
+* This means that Chrome PWAs already handle associated URLs on Android at the OS level using intent filters. This is also known as Deep Linking.
+* Additionally, Android apps are also able to register to be URL handlers by using Android App Links.
+* App Links require server side verification of the relationship to the app while Deep Links do not.
 * Deep Linking will show an app picker but App Linking will take the user directly to the app.
 
 Other browsers (e.g., Edge) on Android are able to add PWAs to the home screen but are not able to register intent filters. They likely need to also be able to use a WebAPK implementation or similar to enable URL handling.
 
 ### iOS, MacOS
 
-* iOS allows the association of apps to websites using [Universal Links](https://developer.apple.com/ios/universal-links/). 
-* Newer versions of MacOS also support Universal Links. 
+* iOS allows the association of apps to websites using [Universal Links](https://developer.apple.com/ios/universal-links/).
+* Newer versions of MacOS also support Universal Links.
 * Safari implements a subset of PWA features.
-* Safari is currently the only browser able to install a PWA as an iOS app. 
-* Universal links/link capturing is not available to iOS PWAs. 
+* Safari is currently the only browser able to install a PWA as an iOS app.
+* Universal links/link capturing is not available to iOS PWAs.
 
 ## Open Questions
 
