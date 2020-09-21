@@ -69,11 +69,11 @@ To allow PWAs to handle URLs that are outside of their own scope, it is necessar
 
 | Field       | Required / Optional | Description                                   | Type     | Default |
 | :---------- | :------------------ | :-------------------------------------------- | :------- | :------ |
-| `app_links` | Optional            | Origins of URLs that the app wishes to handle | object   | `{}`    |
+| `app_links` | Optional            | Origins of URLs that the app wishes to handle | object[] | `[]`    |
 
-We propose adding a new _optional_ member `app_links` to the manifest object of `object` type.  `app_links` contains a required field `origins` of `string[]` type. Each string in `origins` represents an origin matching pattern. These patterns are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that match these origins could be handled by this web app.
+We propose adding a new _optional_ member `app_links` to the manifest object of `object[]` type. Each object in `app_links` contains a `origin` string, which is a pattern for matching origins. These patterns are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that match these origins could be handled by this web app.
 
-`app_links.origins` origin strings are requests from the PWA to handle URLs from those origins. The browser should validate with each origin that the app is recognized and if so retrieve the patterns for allowed URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app.
+Each `app_links` object is a request from the PWA to handle URLs from a specific origin or origins. The browser should validate with each origin that the app is recognized and if so retrieve the patterns for allowed URLs. On an OS that allows for deeper integration, the browser should also register URL handling requests with the OS and keep them in sync with the app.
 
 Example web app manifest at `https://contoso.com/manifest.json` :
 
@@ -93,13 +93,17 @@ Example web app manifest at `https://contoso.com/manifest.json` :
         "/about",
         "/blog"
     ],
-    "app_links": {
-        "origins" : [
-            "contoso.com",
-            "conto.so",
-            "*.contoso.com"
-        ]
-    }
+    "app_links" : [
+        {
+            "origin": "contoso.com"
+        },
+        {
+            "origin": "conto.so"
+        },
+        {
+            "origin": "*.contoso.com"
+        }
+    ]
 }
 ```
 
@@ -121,13 +125,17 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
         "/about",
         "/blog"
     ],
-    "app_links": {
-        "origin": [
-            "contoso.com",
-            "conto.so",
-            "*.contoso.com"
-        ]
-    }
+    "app_links": [
+        {
+            "origin": "contoso.com"
+        },
+        {
+            "origin": "conto.so"
+        },
+        {
+            "origin": "*.contoso.com"
+        }
+    ]
 }
 ```
 
