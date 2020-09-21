@@ -48,11 +48,11 @@ The user clicks on a Spotify link in their native e-mail application, (eg., [htt
     * Allows PWA developers to opt-in to URL handling in the same way across different platforms.
 
 2. Specifying a `web-app-origin-association` file format for validating out-of-scope URL associations.
-    * Provides a web standard option for association with web apps. Does not prevent use of platform specific options.
+    * Provides a web standard option for association with web apps.
     * Protects content owners by letting them define which PWAs are allowed to associate with their sites.
-    * Gives sites control over which URLs are allowed to be handled by each associated PWA.
+    * Gives content owners control over which URLs are allowed to be handled by each associated PWA.
 
-3. If a browser is launched to handle a URL activation, it should look for matching installed PWAs to handle that URL.
+3. If a browser is launched to handle a URL activation, it should look for matching, installed PWAs to handle that URL.
 
 4. If multiple PWAs match a given URL, browsers should display a disambiguation dialog to allow users to choose one or continue in a browser window.
 
@@ -61,7 +61,7 @@ The user clicks on a Spotify link in their native e-mail application, (eg., [htt
 
 **Changes 1-4** allow PWAs to handle URL activations at the browser level without needing to integrate with the OS. As long as a URL activation (clicking on a link) launches a conforming browser, the browser has the ability to launch the matching PWA. A PWA will not be launched through URL activations from the OS if it is not known to the default browser.
 
-To allow PWAs to handle URLs that are outside of their own scope, it is necessary to introduce a mechanism for the owner of those URLs to opt-in to URL handling by PWAs. **Change 2** introduces the concept of a `web-app-origin-association` file that will serve this purpose. This file is similar to the [Apple App Site Association File](https://developer.apple.com/documentation/safariservices/supporting_associated_domains_in_your_app#3001215), the [`assetlinks.json`](https://developer.android.com/training/app-links/verify-site-associations) file in Android, and the [`windows-app-web-link`](https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking#associate-your-app-and-website-with-a-json-file) file in Windows. What differs, is that the `web-app-origin-association` file does not require a platform specific app id, but instead identifies PWAs by their web app manifest URL.
+To allow PWAs to handle URLs that are outside of their own scope, it is necessary to introduce a mechanism for the owner of those URLs to opt-in to URL handling by PWAs. **Change 2** introduces the concept of a `web-app-origin-association` file that will serve this purpose. This file is similar to the [Apple App Site Association File](https://developer.apple.com/documentation/safariservices/supporting_associated_domains_in_your_app#3001215), the [`assetlinks.json`](https://developer.android.com/training/app-links/verify-site-associations) file in Android, and the [`windows-app-web-link`](https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking#associate-your-app-and-website-with-a-json-file) file in Windows. What differs is that the `web-app-origin-association` file does not reference PWAs using a platform-specific app id but by their web app manifest URL.
 
 **Change 5** will also allow PWAs to handle URL activations at the OS level on supporting platforms. If the PWA is able to register as a URL handler with the OS, it could be launched whenever a URL activation is handled by the OS, regardless of the default browser setting. Most native applications rely on the OS for URL activation. In terms of user experience, the OS could now prompt the user to choose between the PWA and the default browser using the system app disambiguation dialog. The user is able to make an explicit choice to select the PWA and configure their default setting from there. (Implementation note: because most OSes do not know of or treat PWAs as first-class applications, it may not be possible to register them directly with the OS as URL handlers. Supporting changes will need to be made in PWA implementation and/or in the OS to enable this. A notable exception is Chrome's implementation of PWAs on Android using `WebAPK` . Because `WebAPK` s are recognized by the Android OS, Chrome PWAs are able to fully integrate with OS features like the app picker.)
 
