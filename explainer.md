@@ -156,68 +156,72 @@ We propose a platform-independent association json file format that origins coul
 Example 1: web-app-origin-association file at both `www.contoso.com/web-app-origin-association.json` and `https://conto.so/web-app-origin-association.json` :
 
 ``` json
-[
-    {
-        "manifest": "https://contoso.com/manifest.json",
-        "handle_urls": {
-            "paths": [
-                "/*"
-            ],
-            "exclude_paths": [
-                "/blog",
-                "/about"
-            ]
+{
+    "web_apps": [
+        {
+            "manifest": "https://contoso.com/manifest.json",
+            "details": {
+                "paths": [
+                    "/*"
+                ],
+                "exclude_paths": [
+                    "/blog",
+                    "/about"
+                ]
+            }
+        },
+        {
+            "manifest": "https://partnerapp.com/manifest.json",
+            "details": {
+                "paths": [
+                    "/public/data/*"
+                ]
+            }
         }
-    },
-    {
-        "manifest": "https://partnerapp.com/manifest.json",
-        "handle_urls": {
-            "paths": [
-                "/public/data/*"
-            ]
-        }
-    }
-]
+    ]
+}
 ```
 
 Example 2: web-app-origin-association file at `https://tenant.contoso.com/web-app-origin-association.json` :
 
 ``` json
-[
-    {
-        "manifest": "https://contoso.com/manifest.json",
-        "handle_urls": {
-            "paths": [
-                "/*"
-            ],
-            "exclude_paths": [
-                "/only/for/partnerapp/*"
-            ]
+{
+    "web_apps": [
+        {
+            "manifest": "https://contoso.com/manifest.json",
+            "details": {
+                "paths": [
+                    "/*"
+                ],
+                "exclude_paths": [
+                    "/only/for/partnerapp/*"
+                ]
+            }
+        },
+        {
+            "manifest": "https://partnerapp.com/manifest.json",
+            "details": {
+                "paths": [
+                    "/*"
+                ]
+            }
         }
-    },
-    {
-        "manifest": "https://partnerapp.com/manifest.json",
-        "handle_urls": {
-            "paths": [
-                "/*"
-            ]
-        }
-    }
-]
+    ]
+}
 ```
 
 Example 1 shows that the origins `https://contoso.com` and `https://conto.so` can both use the same file to associate with the PWA that has a web app manifest at `www.contoso.com/manifest.json` . In practice, the file at `contoso.so` could be a redirect.
 
 Example 2 shows that the origin `https://tenant.contoso.com` allows the PWAs with web app manifests at `https://contoso.com/manifest.json` and `https://partnerapp.com/manifest.json` to handle a subset of its URLs.
 
-The top level structure is an array of objects. Each object represents an entry for a unique web app. Each object contains:
+This file must contain valid JSON. The top-level structure is an object, with a member named `web_apps`. `web_apps` is an array of objects and each object represents an entry for a unique web app. Each object contains:
 
 | Field         | Required / Optional | Description                                              | Type   | Default |
 | :------------ | :------------------ | :------------------------------------------------------- | :----- | :------ |
 | `manifest`    | Required            | URL string of the web app manifest of the associated PWA | string | N/A     |
-| `handle_urls` | Optional            | Contains arrays of URL patterns                          | object | N/A     |
+| `details`     | Optional            | Contains arrays of URL patterns                          | object | N/A     |
 
-Each `handle_urls` contains:
+Each `details` object contains:
 | Field           | Required / Optional | Description                      | Type     | Default |
 | :-------------- | :------------------ | :------------------------------- | :------- | :------ |
 | `paths`         | Optional            | Array of allowed path strings    | string[] | `[]`    |
