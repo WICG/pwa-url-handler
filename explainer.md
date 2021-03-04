@@ -1,8 +1,8 @@
 # PWAs as URL Handlers
 
-Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt; luhua@microsoft.com&gt;
+Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt;luhua@microsoft.com&gt; [Mandy Chen](https://github.com/chruxin) &lt;mandy.chen@microsoft.com&gt;
 
-Input from: [Mike Jackson](mailto:mjackson@microsoft.com), [Mandy Chen](mailto:mandy.chen@microsoft.com), [Howard Wolosky](mailto:howard.wolosky@microsoft.com), [Matt Giuca](mailto:mgiuca@google.com)
+Input from: [Mike Jackson](mailto:mjackson@microsoft.com), [Howard Wolosky](mailto:howard.wolosky@microsoft.com), [Matt Giuca](mailto:mgiuca@google.com)
 
 ## Status of this Document
 
@@ -135,25 +135,27 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
 
 A PWA matches a URL for URL handling if the URL matches one of the origin strings in `url_handlers` and the browser is able to validate that the origin agrees to let this app handle such a URL.
 
-`url-handlers` can contain an origin that encompasses requesting PWA's scope and also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `url_handlers` requests can be validated with origins. Navigation redirection is not a good alternative with respect to offline scenarios.
+`url_handlers` can contain an origin that encompasses requesting PWA's scope and also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `url_handlers` requests can be validated with origins. Navigation redirection is not a good alternative with respect to offline scenarios.
+
+Note that the origin cannot be a [top-level domain](https://en.wikipedia.org/wiki/Top-level_domain) and must be a known domain. For example, `uk.co` and `unknowndomain` are not accepted.
 
 #### Wildcard Matching
 
 The wildcard character `*` can be used to match one or more characters.
 
-A wildcard prefix can be used in `url_handlers` origin strings to match for different subdomains. The prefix must be `*.` for this usage. The scheme is still assumed to be https when using a wildcard prefix.
+A wildcard prefix can be used in `url_handlers` origin strings to match for different subdomains. The prefix must be `*.` and placed at the start of the specified origin for this usage. The scheme is still assumed to be https when using a wildcard prefix. Note that the requirement for the effective origin (i.e. what comes after the wildcard prefix) is the same as above.
 
-For eg. `*.contoso.com` matches `tenant.contoso.com` and `www.tenant.contoso.com` but not `contoso.com` . There may be other ways of specifying a group of related origins such as [First Party Sets](https://github.com/krgovind/first-party-sets). This feature would not be necessary if there was a way to specify a multi-origin app scope with a similar matching pattern.
+For eg. `*.contoso.com` matches `tenant.contoso.com` and `www.tenant.contoso.com` but not `contoso.com`; `*.uk.co` and `*.unknowndomain` are not accepted. There may be other ways of specifying a group of related origins such as [First Party Sets](https://github.com/krgovind/first-party-sets). This feature would not be necessary if there was a way to specify a multi-origin app scope with a similar matching pattern.
 
 ### web app to origin association
 
-Browsers must validate a handshake between a PWA and an origin to successfully register URL handlers. Origins can declare associations with specific web apps to complete this handshake. Web apps can be identified by their manifest URL currently before a [unique identifier](https://github.com/w3c/manifest/issues/586) is standardized. An origin should be allowed to specify URL patterns to fine-tune URL paths for URL handling.
+Browsers must validate a handshake between a PWA and an origin to successfully register URL handlers. Origins can declare associations with specific web apps to complete this handshake. Web apps can be identified by their manifest URL currently before the [unique PWA identifier](https://github.com/philloooo/pwa-unique-id/blob/main/explainer.md) work is completed. An origin should be allowed to specify URL patterns to fine-tune URL paths for URL handling.
 
 We propose a platform-independent association json file format that origins could use for the handshake.
 
 #### web-app-origin-association file
 
-Example 1: web-app-origin-association file at both `www.contoso.com/web-app-origin-association.json` and `https://conto.so/web-app-origin-association.json` :
+Example 1: web-app-origin-association file at both `www.contoso.com/.well-known/web-app-origin-association` and `https://conto.so/.well-known/web-app-origin-association` :
 
 ``` json
 {
@@ -182,7 +184,7 @@ Example 1: web-app-origin-association file at both `www.contoso.com/web-app-orig
 }
 ```
 
-Example 2: web-app-origin-association file at `https://tenant.contoso.com/web-app-origin-association.json` :
+Example 2: web-app-origin-association file at `https://tenant.contoso.com/.well-known/web-app-origin-association` :
 
 ``` json
 {
@@ -227,11 +229,20 @@ Each `details` object contains:
 | `paths`         | Optional            | Array of allowed path strings    | string[] | `[]`    |
 | `exclude_paths` | Optional            | Array of disallowed path strings | string[] | `[]`    |
 
+#### Path Matching
+- When `paths` and `exclude_paths` are both unspecified: any path with the origin is matched
+- When `paths` is specified but `exclude_paths` is unspecified: only paths present in `paths` are matched
+- When `paths` is unspecified but `exclude_paths` is specified: all the paths except the ones in `exclude_paths` are matched
+- When `paths` and `exclude_paths` are both specified: paths that are in `paths` and not in `exclude_paths` are matched
+
+#### Wildcard Matching
+The wildcard character `*` can also be used in `paths` or `exclude_paths` to match one or more characters.
+
+A wildcard prefix can be placed at the end of a path or exclude path string. For example, `/help/*` will match any subpath of `/help/`, and `*` will match any path.
+
 #### File Location
 
-To make use of the web-app-origin-association file, we suggest browsers locate it using a `<link rel="web-app-origin-association" href="/web-app-origin-association">` element in the header section of the main document at the origin's root path. Other formats such as `assetlinks.json` will have different requirements.
-
-Alternatively, we suggest that association files be placed in relation to the root path of the origin. In order to match an origin with a `*.` prefix, we suggest that the corresponding association file be placed relative to the root path of the domain. Eg. an origin `*.contoso.com` could have a `web-app-origin-association` file at `contoso.com/web-app-origin-association`.
+To make use of the web-app-origin-association file, we suggest that association files be placed in `.well-known` at the root path of the origin. In order to match an origin with a `*.` prefix, we suggest that the corresponding association file be placed relative to the root path of the domain. Eg. an origin `*.contoso.com` could have a `web-app-origin-association` file at `contoso.com/.well-known/web-app-origin-association`.
 
 #### Failure to Associate
 
@@ -308,6 +319,9 @@ DLC aims to provide a choice of different app launch behaviors. To avoid overlap
 ### [Service Worker Scope Pattern Matching](https://github.com/wanderview/service-worker-scope-pattern-matching/blob/master/explainer.md) (SWSPM)
 
 This proposal uses a wildcard and pattern matching syntax that is compatible with the manifest syntax designed for scope pattern matching. If there are multiple manifest members that use URL pattern matching, URL Handling should continue to use a compatible syntax for developers' ease of use.
+
+### [PWA Unique ID](https://github.com/philloooo/pwa-unique-id/blob/main/explainer.md)
+This proposal will standardize a unique ID for PWAs and allow it to be used outside of user agents. Once this feature is available, URL handling will leverage it to use the unique ID instead of manifest URL to identify a PWA.
 
 ## OS Specific Implementation Notes
 
