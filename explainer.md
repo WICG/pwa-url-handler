@@ -145,7 +145,7 @@ The wildcard character `*` can be used to match one or more characters.
 
 A wildcard prefix can be used in `url_handlers` origin strings to match for different subdomains. The prefix must be `*.` and placed at the start of the specified origin for this usage. The scheme is still assumed to be https when using a wildcard prefix. Note that the requirement for the effective origin (i.e. what comes after the wildcard prefix) is the same as above.
 
-For eg. `*.contoso.com` matches `tenant.contoso.com` and `www.tenant.contoso.com` but not `contoso.com`; `*.uk.co` and `*.unknowndomain` are not accepted. There may be other ways of specifying a group of related origins such as [First Party Sets](https://github.com/krgovind/first-party-sets). This feature would not be necessary if there was a way to specify a multi-origin app scope with a similar matching pattern.
+For eg. `*.contoso.com` matches `tenant.contoso.com` and `www.tenant.contoso.com` but not `contoso.com`; `*.uk.co` and `*.unknowndomain` are not accepted because the base origins are not accepted as stated above.
 
 ### web app to origin association
 
