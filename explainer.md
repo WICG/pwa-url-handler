@@ -91,13 +91,13 @@ Example web app manifest at `https://contoso.com/manifest.json` :
     "capture_links": "existing_client_event",
     "url_handlers" : [
         {
-            "origin": "contoso.com"
+            "origin": "https://contoso.com"
         },
         {
-            "origin": "conto.so"
+            "origin": "https://conto.so"
         },
         {
-            "origin": "*.contoso.com"
+            "origin": "https://*.contoso.com"
         }
     ]
 }
@@ -119,13 +119,13 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
     "capture_links": "existing_client_event",
     "url_handlers": [
         {
-            "origin": "contoso.com"
+            "origin": "https://contoso.com"
         },
         {
-            "origin": "conto.so"
+            "origin": "https://conto.so"
         },
         {
-            "origin": "*.contoso.com"
+            "origin": "https://*.contoso.com"
         }
     ]
 }
