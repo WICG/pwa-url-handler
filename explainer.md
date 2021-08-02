@@ -229,7 +229,7 @@ Each `details` object contains:
 
 #### File Location
 
-To make use of the web-app-origin-association file, we suggest that association files be placed in relation to the root path of the origin. In order to match an origin with a `*.` prefix, we suggest that the corresponding association file be placed relative to the root path of the domain. Eg. an origin `*.contoso.com` could have a `web-app-origin-association` file at `contoso.com/.well-known/web-app-origin-association`.
+To make use of the web-app-origin-association file, we suggest that association files be placed in a `.well-known` directory within the root path of the origin. In order to match an origin with a `*.` prefix, we suggest that the corresponding association file be placed relative to the root path of the domain. Eg. an origin `*.contoso.com` could have a `web-app-origin-association` file at `contoso.com/.well-known/web-app-origin-association`.
 
 Alternatively, we suggest browsers locate it using a `<link rel="web-app-origin-association" href="/web-app-origin-association">` element in the header section of the main document at the origin's root path.
 
