@@ -131,11 +131,11 @@ Example web app manifest at `https://partnerapp.com/manifest.json`
 }
 ```
 
-(`capture_link` from the [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) proposal added to examples for comparison.)
+(`capture_links` from the [Declarative Link Capturing](https://github.com/WICG/sw-launch/blob/master/declarative_link_capturing.md) proposal added to examples for comparison.)
 
 A PWA matches a URL for URL handling if the URL matches one of the origin strings in `url_handlers` and the browser is able to validate that the origin agrees to let this app handle such a URL.
 
-`url-handlers` can contain an origin that encompasses requesting PWA's scope and also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `url_handlers` requests can be validated with origins. Navigation redirection is not a good alternative with respect to offline scenarios.
+`url_handlers` can contain an origin that encompasses requesting PWA's scope and also other unrelated origins. Not restricting URLs to the same scope or domain as the requesting PWA allows the developer to use different domain names for the same content but handle them with the same PWA. See [this section](#web-app-to-origin-association) for how `url_handlers` requests can be validated with origins. Navigation redirection is not a good alternative with respect to offline scenarios.
 
 #### Wildcard Matching
 
@@ -153,7 +153,7 @@ We propose a platform-independent association json file format that origins coul
 
 #### web-app-origin-association file
 
-Example 1: web-app-origin-association file at both `www.contoso.com/web-app-origin-association.json` and `https://conto.so/web-app-origin-association.json` :
+Example 1: web-app-origin-association file at both `www.contoso.com/.well-known/web-app-origin-association` and `https://conto.so/.well-known/web-app-origin-association` :
 
 ``` json
 {
@@ -182,7 +182,7 @@ Example 1: web-app-origin-association file at both `www.contoso.com/web-app-orig
 }
 ```
 
-Example 2: web-app-origin-association file at `https://tenant.contoso.com/web-app-origin-association.json` :
+Example 2: web-app-origin-association file at `https://tenant.contoso.com/.well-known/web-app-origin-association` :
 
 ``` json
 {
@@ -229,9 +229,9 @@ Each `details` object contains:
 
 #### File Location
 
-To make use of the web-app-origin-association file, we suggest browsers locate it using a `<link rel="web-app-origin-association" href="/web-app-origin-association">` element in the header section of the main document at the origin's root path. Other formats such as `assetlinks.json` will have different requirements.
+To make use of the web-app-origin-association file, we suggest that association files be placed in a `.well-known` directory within the root path of the origin. In order to match an origin with a `*.` prefix, we suggest that the corresponding association file be placed relative to the root path of the domain. Eg. an origin `*.contoso.com` could have a `web-app-origin-association` file at `contoso.com/.well-known/web-app-origin-association`.
 
-Alternatively, we suggest that association files be placed in relation to the root path of the origin. In order to match an origin with a `*.` prefix, we suggest that the corresponding association file be placed relative to the root path of the domain. Eg. an origin `*.contoso.com` could have a `web-app-origin-association` file at `contoso.com/web-app-origin-association`.
+Alternatively, we suggest browsers locate it using a `<link rel="web-app-origin-association" href="/web-app-origin-association">` element in the header section of the main document at the origin's root path.
 
 #### Failure to Associate
 
