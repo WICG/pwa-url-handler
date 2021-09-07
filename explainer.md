@@ -67,9 +67,10 @@ To allow PWAs to handle URLs that are outside of their own scope, it is necessar
 
 ### Manifest Changes
 
-| Field       | Required / Optional | Description                                   | Type     | Default |
-| :---------- | :------------------ | :-------------------------------------------- | :------- | :------ |
-| `url_handlers` | Optional            | Origins of URLs that the app wishes to handle | object[] | `[]`    |
+| Field          | Required / Optional | Description                                   | Type     | Default |  Wildcard allowed  |
+| :----------    | :------------------ | :-------------------------------------------- | :------- | :------ |  :---------------  |
+| `url_handlers` | Optional            | Origins of URLs that the app wishes to handle | object[] | `[]`    |  N/A               |
+| `origin`       | Required            | Origin                                        | string   |  N/A    |  At front of host  |
 
 We propose adding a new _optional_ member `url_handlers` to the manifest object of `object[]` type. Each object in `url_handlers` contains a `origin` string, which is a pattern for matching origins. These patterns are allowed to have a wildcard (*) prefix in order to include multiple sub-domains. URLs that match these origins could be handled by this web app.
 
@@ -216,16 +217,16 @@ Example 2 shows that the origin `https://tenant.contoso.com` allows the PWAs wit
 
 This file must contain valid JSON. The top-level structure is an object, with a member named `web_apps`. `web_apps` is an array of objects and each object represents an entry for a unique web app. Each object contains:
 
-| Field         | Required / Optional | Description                                              | Type   | Default |
-| :------------ | :------------------ | :------------------------------------------------------- | :----- | :------ |
-| `manifest`    | Required            | URL string of the web app manifest of the associated PWA | string | N/A     |
-| `details`     | Optional            | Contains arrays of URL patterns                          | object | N/A     |
+| Field         | Required / Optional | Description                                              | Type   | Default | Wildcard allowed |
+| :------------ | :------------------ | :------------------------------------------------------- | :----- | :------ | :--------------- |
+| `manifest`    | Required            | URL string of the web app manifest of the associated PWA | string | N/A     | No               |
+| `details`     | Optional            | Contains arrays of URL patterns                          | object | N/A     | N/A              |
 
 Each `details` object contains:
-| Field           | Required / Optional | Description                      | Type     | Default |
-| :-------------- | :------------------ | :------------------------------- | :------- | :------ |
-| `paths`         | Optional            | Array of allowed path strings    | string[] | `[]`    |
-| `exclude_paths` | Optional            | Array of disallowed path strings | string[] | `[]`    |
+| Field           | Required / Optional | Description                      | Type     | Default |  Wildcard allowed                |
+| :-------------- | :------------------ | :------------------------------- | :------- | :------ |  :------------------------------ |
+| `paths`         | Optional            | Array of allowed path strings    | string[] | `[]`    |  At front and back of each entry |
+| `exclude_paths` | Optional            | Array of disallowed path strings | string[] | `[]`    |  At front and back of each entry |
 
 #### File Location
 
