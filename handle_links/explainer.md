@@ -65,7 +65,7 @@ The developer options described in this explainer works on app manifest scope an
 ## Related Proposals
 
 ### URL Handlers
-The `handle_links` proposal is intended to be a part replacement to the [PWA as URL Handlers proposal](https://github.com/WICG/pwa-url-handler/blob/main/explainer_url_handler.md). The functionality of `url_handlers` is now divided between `scope_extensions` and `handle_links`. 
+The `handle_links` proposal is intended to be a part replacement to the [PWA as URL Handlers proposal](https://github.com/WICG/pwa-url-handler/blob/main/explainer.md). The functionality of `url_handlers` is now divided between `scope_extensions` and `handle_links`. 
 
 ### `scope_extensions`
 
