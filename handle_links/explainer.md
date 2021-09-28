@@ -69,8 +69,8 @@ The `handle_links` proposal is intended to be a part replacement to the [PWA as 
 
 ### `scope_extensions`
 
-The `scope_extensions` proposal allows web apps to extend their scope to other origins. When used in conjunction with `handle_links` the web app can open links from the new extended scope.
+The [`scope_extensions`](https://github.com/WICG/manifest-incubations/blob/gh-pages/scope_extensions-explainer.md) proposal allows web apps to extend their scope to other origins. When used in conjunction with `handle_links` the web app can open links from the new extended scope.
 
 ### `launch_handler`
  
-The `launch_handler` enables web apps to customize their launch behavior across all types of app launch triggers. This can work with `handle_links` by specifying how/where to open/route the links. 
+The [`launch_handler`](https://github.com/WICG/sw-launch/blob/main/launch_handler.md) proposal enables web apps to customize their launch behavior across all types of app launch triggers. This can work with `handle_links` by specifying how/where to open/route the links. 
