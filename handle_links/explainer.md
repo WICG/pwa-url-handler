@@ -40,17 +40,14 @@ In a similar vein, a user can click on a link of a music streaming service (www.
 We propose the addition of the `handle_links` member to the web app manifest that specifies the default link handling for the installed web app. The shape of this member is as follows:
 
 ```json
-"handle_links: {
-    "mode" : "auto" | "all" | "none"
-} "
+"handle_links: "auto" | "preferred" | "not-preferred"
 ```
 
-* `all`: the user agent should open in-scope links within the installed application.
-* `none`: the use agent must not open links within the installed applications.
+* `preferred`: the user agent should open in-scope links within the installed application.
+* `not-preferred`: the use agent must not open links within the installed applications.
 * `auto`: The behavior is up to the user agent to decide what works best for the platform.
 
-The `mode` defines which links should be handled, where `auto` is the default and decided by the browser, `all` opens all link within scope in the installed web app and `none` allows for links to not be handled by the app.  
-
+The `mode` defines which links should be handled, where `auto` is the default and decided by the browser, `preferred` opens all link within scope in the installed web app and `not-preferred` allows for links to not be handled by the app.  
 
 ## Privacy and Security Considerations
 
