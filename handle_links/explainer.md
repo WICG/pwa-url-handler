@@ -45,8 +45,8 @@ We propose the addition of the `handle_links` member to the web app manifest tha
 }
 ```
 
-* `all`: the user agent should open in-scope links within the installed application.
-* `none`: the use agent must not open links within the installed applications.
+* `prefered`: the user agent should open in-scope links within the installed application.
+* `not-prefered`: the use agent must not open links within the installed application.
 * `auto`: The behavior is up to the user agent to decide what works best for the platform.
 
 The `mode` defines which links should be handled, where `auto` is the default and decided by the browser, `all` opens all link within scope in the installed web app and `none` allows for links to not be handled by the app.  
