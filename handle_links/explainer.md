@@ -44,10 +44,13 @@ We propose the addition of the `handle_links` member to the web app manifest tha
 ```
 
 * `preferred`: the user agent should open in-scope links within the installed application.
-* `not-preferred`: the use agent must not open links within the installed applications.
-* `auto`: The behavior is up to the user agent to decide what works best for the platform.
+* `not-preferred`: the user agent should not open links within the installed application.
+* `auto`: The user agent may select the appropriate behavior for the platform.
 
-The  options indicate the developer's link handling preference: `auto` is the default and allows the browser implementation to choose between `preferred` and `not-preferred`. `preferred` opens all link within scope in the installed web app and `not-preferred` allows for links to not be handled by the app.  
+These options indicate an app's link handling preference. They should be seen as suggestions from an app to the user agent. 
+* `auto`: Default value if `handle_links` is not found in the manifest. The user agent may choose between `preferred` and `not-preferred`.
+* `preferred`: The user agent should handle links using matching app clients and may promote link handling behavior. 
+* `not-preferred`: The user agent should not handle links using matching app clients and may not promote link handling behavior.
 
 ## Privacy and Security Considerations
 
