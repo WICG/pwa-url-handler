@@ -39,7 +39,7 @@ In a similar vein, a user can click on a link of a music streaming service (www.
 
 We propose the addition of the `handle_links` member to the web app manifest that specifies the default link handling for the installed web app. The shape of this member is as follows:
 
-```json
+```
 "handle_links": "auto" | "preferred" | "not-preferred"
 ```
 
