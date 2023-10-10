@@ -4,6 +4,11 @@ Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt;luhua@microsoft.com&gt;
 
 Input from: [Mike Jackson](mailto:mjackson@microsoft.com), [Mandy Chen](mailto:mandy.chen@microsoft.com), [Howard Wolosky](mailto:howard.wolosky@microsoft.com), [Matt Giuca](mailto:mgiuca@google.com)
 
+## Obsolete
+
+This API proposal is obsolete in favor of [`scope_extensions`](https://github.com/WICG/manifest-incubations/blob/gh-pages/scope_extensions-explainer.md) and link capturing.
+Context: https://docs.google.com/document/d/1w9qHqVJmZfO07kbiRMd9lDQMW15DeK5o-p-rZyL7twk
+
 ## Status of this Document
 
 This document is intended as a starting point for engaging the community and standards bodies in developing collaborative solutions fit for standardization. As the solutions to problems described in this document progress along the standards-track, we will retain this document as an archive and use this section to keep the community up-to-date with the most current standards venue and content location of future work and discussions.
