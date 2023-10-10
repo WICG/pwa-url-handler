@@ -1,6 +1,6 @@
 # PWAs as URL Handlers
 
-Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt; luhua@microsoft.com&gt;
+Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt;luhua@microsoft.com&gt;
 
 Input from: [Mike Jackson](mailto:mjackson@microsoft.com), [Mandy Chen](mailto:mandy.chen@microsoft.com), [Howard Wolosky](mailto:howard.wolosky@microsoft.com), [Matt Giuca](mailto:mgiuca@google.com)
 
