@@ -5,6 +5,8 @@ Author: Lu Huang &lt;<luhua@microsoft.com>&gt;<br>
 
 Date: 2020-05-28
 
+⚠️⚠️ **Status**: These features are now developed under https://github.com/WICG/manifest-incubation/ ⚠️⚠️
+
 This site contains proposal for a new capability that would allow web applications to register as URL handlers. Web applications that are URL handlers can be launched to handle URL link activations. We welcome contributions to this proposal.
 
 [Explainer](explainer.md)
