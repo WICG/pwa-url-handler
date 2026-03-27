@@ -1,4 +1,4 @@
-# PWAs as URL Handlers
+# PWAs as URL Handlers (Archived)
 
 Authors: [Lu Huang](https://github.com/LuHuangMSFT) &lt;luhua@microsoft.com&gt;
 
